@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/courier
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+server:
+  port: 8011
+logging:
+  level:
+    com.jf3q.courier.dao: DEBUG
+txsms:
+  AppId: 1400637406
+  AppKey: 6c5d51fa73f1b9950b04cab002f2cb6c
+  TemplateId: 1318384
+  signName: 碎梦轻尘
+##虹软人脸识别配置
+face:
+  appId: E4Bcm2mKdVqgvBNqe3BMFayvcAEL6NQ8nsBwNYiQ7t4d
+  sdkKey: CFkLtJF6QAoieiWQACUrDxd53JzyvsSPj4UyXJW9r4sQ
+  dllPath: D:/WIN64
