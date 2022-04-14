@@ -112,6 +112,7 @@ public class UserInfoService extends ServiceImpl<UserInfoDao, UserInfo> {
         UpdateWrapper<UserInfo> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("phone", userInfoDTO.getPhone())
                 .set("note", userInfoDTO.getNote())
+                .set("photo", userInfoDTO.getPhoto())
                 .eq("id", userInfoDTO.getUserId());
         userInfoDao.update(null, updateWrapper);
     }

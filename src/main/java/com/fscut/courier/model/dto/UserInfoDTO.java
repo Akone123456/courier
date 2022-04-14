@@ -29,6 +29,11 @@ public class UserInfoDTO implements Serializable {
     private String note;
 
     /**
+     * 头像
+     */
+    @NotNull(message = "头像不能为空", groups = {Update.class})
+    private String photo;
+    /**
      * 原始密码
      */
     @NotNull(message = "原始密码不能为空", groups = {UpdatePswd.class})
