@@ -1,4 +1,4 @@
-package com.fscut.courier.bean;
+package com.fscut.courier.model.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -11,11 +11,23 @@ import lombok.Data;
 @TableName("admin")
 public class Admin {
 
+    /**
+     * 主键id
+     */
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String username;//账号
-    private String password;//密码
+    /**
+     * 账号
+     */
+    private String username;
+    /**
+     * 密码
+     */
+    private String password;
 
+    /**
+     * 登陆者类型（‘admin’）
+     */
     @TableField(exist = false)
-    private String loginType;//登陆者类型（'admin'）
+    private String loginType;
 }

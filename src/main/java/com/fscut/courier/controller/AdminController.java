@@ -1,6 +1,6 @@
-package com.fscut.courier.control;
+package com.fscut.courier.controller;
 
-import com.fscut.courier.bean.Admin;
+import com.fscut.courier.model.po.Admin;
 import com.fscut.courier.service.AdminService;
 import com.fscut.courier.utils.MessUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/admin")
 @CrossOrigin
-public class AdminControl {
+public class AdminController {
     @Autowired
     AdminService adminService;
 

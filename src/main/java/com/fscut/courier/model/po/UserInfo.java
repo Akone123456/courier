@@ -1,4 +1,4 @@
-package com.fscut.courier.bean;
+package com.fscut.courier.model.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -22,24 +22,62 @@ import lombok.Data;
 @Data
 @TableName("userinfo")
 public class UserInfo {
+    /**
+     * 主键id
+     */
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String phone;//手机号
+    /**
+     * 手机号
+     */
+    private String phone;
+    /**
+     * 账号
+     */
     private String username;
+    /**
+     * 密码
+     */
     private String password;
+    /**
+     * 头像
+     */
     private String photo;//头像
-    private Integer status;//状态(1启用 0禁用)
-    private byte[] faceData;//人脸特征值
+    /**
+     * 人脸状态（1启用，0禁用）
+     */
+    private Integer status;
+    /**
+     * 人脸特征值
+     */
+    private byte[] faceData;
+    /**
+     * 创建时间
+     */
     private String createTime;
+    /**
+     * 备注
+     */
     private String note;
-
+    /**
+     * 角色
+     */
+    private String role;
+    /**
+     * 短信验证码
+     */
     @TableField(exist = false)
-    private  String smscode;
+    private String smscode;
+    /**
+     * base64的图片
+     */
     @TableField(exist = false)
-    private String img;//base64位的图片
+    private String img;
+    /**
+     * 登陆者类型
+     */
     @TableField(exist = false)
-    private String loginType;//登陆者类型（'userinfo'）
-
+    private String loginType;
 
 
 }

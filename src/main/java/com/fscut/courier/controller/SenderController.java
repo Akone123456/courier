@@ -1,14 +1,17 @@
-package com.fscut.courier.control;
+package com.fscut.courier.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fscut.courier.bean.Sender;
+import com.fscut.courier.model.po.Sender;
 import com.fscut.courier.service.SenderService;
 import com.fscut.courier.utils.MessUtil;
+import com.fscut.courier.utils.SessionUtil;
 import com.sun.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+
+import static com.fscut.courier.utils.ConstValue.USER_ID;
 
 /**
  * 管理端-配送员control控制层
@@ -16,7 +19,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/admin/sender")
 @CrossOrigin
-public class SenderControl extends SendSmsControl {
+public class SenderController extends SendSmsController {
 
 
     @Autowired
@@ -52,6 +55,7 @@ public class SenderControl extends SendSmsControl {
                 messUtil.setMsg("账号密码错误，请重新登录");
             }else {
                 employ.setLoginType("sender");
+                SessionUtil.getSession().setAttribute(USER_ID, employ.getId());
                 messUtil.setStatus(1);
                 messUtil.setObj(employ);
                 messUtil.setMsg("登录成功");
@@ -86,6 +90,7 @@ public class SenderControl extends SendSmsControl {
                 //判断验证码是否正确
                if(map.get(phone)!=null &&map.get(phone).equals(smscode)) {
                    one.setLoginType("sender");
+                   SessionUtil.getSession().setAttribute(USER_ID, one.getId());
                    messUtil.setStatus(1);
                    messUtil.setObj(one);
                    messUtil.setMsg("登录成功");

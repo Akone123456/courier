@@ -1,4 +1,4 @@
-package com.fscut.courier.control;
+package com.fscut.courier.controller;
 
 import com.fscut.courier.config.TxSmsTemplate;
 import com.fscut.courier.utils.MessUtil;
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @RestController
 @CrossOrigin
-public class SendSmsControl  {
+public class SendSmsController {
 
    public static Map<String,String> map =new HashMap<>();
     @Autowired

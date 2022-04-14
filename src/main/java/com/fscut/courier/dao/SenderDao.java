@@ -1,13 +1,13 @@
 package com.fscut.courier.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fscut.courier.bean.Sender;
+import com.fscut.courier.model.po.Sender;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-@Mapper
+@Repository
 public interface SenderDao extends BaseMapper<Sender> {
 
 }
