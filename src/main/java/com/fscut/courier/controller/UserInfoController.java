@@ -71,7 +71,7 @@ public class UserInfoController extends SendSmsController {
                     o.setStatus(1);
                     o.setCreateTime(DateUtils.getNowDateString());
                     o.setPhoto(Sys.defaultFace);
-                    o.setRole(UserRoleEnum.USER.getRole());
+                    //o.setRole(UserRoleEnum.USER.getRole());
                     userInfoService.save(o);
                     System.out.println("注册的用户：" + o);
                     o.setLoginType("userinfo");
