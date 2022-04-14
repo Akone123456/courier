@@ -98,7 +98,7 @@ public class CenterController {
      * @return
      */
     @PostMapping("sender/updatePswd")
-    public ResultUtil.Result senderUpdatePswd(@RequestBody @Validated({SenderDTO.Update.class}) SenderDTO senderDTO) {
+    public ResultUtil.Result senderUpdatePswd(@RequestBody @Validated({SenderDTO.UpdatePswd.class}) SenderDTO senderDTO) {
         senderService.updatePswd(senderDTO);
         return ok();
     }
