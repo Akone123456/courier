@@ -34,26 +34,28 @@ public class CenterController {
     /**
      * 普通用户个人中心
      */
-    @GetMapping("user/display")
-    public ResultUtil.Result userDisplay() {
+    @GetMapping("user/display/{userId}")
+    public ResultUtil.Result userDisplay(@PathVariable("userId") Integer userId) {
 
-        return ok(userInfoService.display());
+        return ok(userInfoService.display(userId));
     }
+
     /**
      * 配送员个人中心
      */
-    @GetMapping("sender/display")
-    public ResultUtil.Result senderDisplay() {
+    @GetMapping("sender/display/{userId}")
+    public ResultUtil.Result senderDisplay(@PathVariable("userId") Integer userId) {
 
-        return ok(senderService.display());
+        return ok(senderService.display(userId));
     }
+
     /**
      * 管理员个人中心
      */
-    @GetMapping("admin/display")
-    public ResultUtil.Result adminDisplay() {
+    @GetMapping("admin/display/{userId}")
+    public ResultUtil.Result adminDisplay(@PathVariable("userId") Integer userId) {
 
-        return ok(adminService.display());
+        return ok(adminService.display(userId));
     }
 
     /**
@@ -67,6 +69,7 @@ public class CenterController {
         userInfoService.updateAccount(userInfoDTO);
         return ok();
     }
+
     /**
      * 配送员修改信息
      *
@@ -102,6 +105,7 @@ public class CenterController {
         senderService.updatePswd(senderDTO);
         return ok();
     }
+
     /**
      * 管理员修改密码
      *

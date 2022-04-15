@@ -85,11 +85,10 @@ public class SenderService extends ServiceImpl<SenderDao, Sender> {
      *
      * @return
      */
-    public SenderVO display() {
-        // 获取用户id
-        //int userId = (Integer) SessionUtil.getSession().getAttribute(USER_ID);
+    public SenderVO display(Integer userId) {
+
         QueryWrapper<Sender> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", 4);
+        queryWrapper.eq("id", userId);
         Sender sender = senderDao.selectOne(queryWrapper);
         // 判断用户是否存在
         ValidateUtil.logicalNotNull(sender, SENDER_USER_NOT_EXIST);

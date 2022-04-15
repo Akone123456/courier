@@ -28,6 +28,10 @@ public class UserInfoVO {
      */
     private String phone;
     /**
+     * 头像
+     */
+    private String photo;
+    /**
      * 个人简介
      */
     private String note;
@@ -37,7 +41,7 @@ public class UserInfoVO {
                 .put(USER_ID, getUserId())
                 .put(USER_NAME, getUserName())
                 .put(PHONE, getPhone())
-                .put(PHOTO, getPhone())
+                .put(PHOTO, getPhoto())
                 .put(NOTE, getNote())
                 .build();
     }

@@ -91,9 +91,8 @@ public class UserInfoService extends ServiceImpl<UserInfoDao, UserInfo> {
      *
      * @return
      */
-    public UserInfoVO display() {
+    public UserInfoVO display(Integer userId) {
         // 获取用户id
-        int userId = (Integer) SessionUtil.getSession().getAttribute(USER_ID);
         QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", userId);
         UserInfo userInfo = userInfoDao.selectOne(queryWrapper);

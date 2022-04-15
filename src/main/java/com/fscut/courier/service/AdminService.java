@@ -52,9 +52,7 @@ public class AdminService extends ServiceImpl<AdminDao, Admin> {
      *
      * @return
      */
-    public AdminVO display() {
-        // 获取用户id
-        int userId = (Integer) SessionUtil.getSession().getAttribute(USER_ID);
+    public AdminVO display(Integer userId) {
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", userId);
         Admin admin = adminDao.selectOne(queryWrapper);

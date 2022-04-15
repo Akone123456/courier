@@ -17,6 +17,7 @@ public class UserInfoVOFactory {
                 .userId(userInfo.getId())
                 .userName(userInfo.getUsername())
                 .phone(userInfo.getPhone())
+                .photo(userInfo.getPhoto())
                 .note(userInfo.getNote())
                 .build();
     }
