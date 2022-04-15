@@ -18,5 +18,8 @@ public class ConstValue {
     public static final String SENDER_USER_NOT_EXIST = "配送员不存在";
     public static final String ORIGINAL_PASSWORD = "原始密码错误";
     public static final String REAL_NAME = "realName";
+    public static final String ADDRESS_LIST = "addressList";
+    public static final Integer DEFAULT = 1;
+    public static final Integer NOT_DEFAULT = 0;
 
 }
