@@ -14,8 +14,8 @@ public class AddressDTO {
     /**
      * 用户id
      */
-    @NotNull(message = "用户id不为空", groups = {Save.class, Update.class})
-    @Min(value = 1, message = "用户id不能小于1", groups = {Save.class, Update.class})
+    @NotNull(message = "用户id不为空", groups = {Save.class, Update.class, Delete.class})
+    @Min(value = 1, message = "用户id不能小于1", groups = {Save.class, Update.class, Delete.class})
     private Integer userId;
     /**
      * 收货地址id
@@ -63,6 +63,10 @@ public class AddressDTO {
     }
 
     public interface Update {
+
+    }
+
+    public interface Delete {
 
     }
 

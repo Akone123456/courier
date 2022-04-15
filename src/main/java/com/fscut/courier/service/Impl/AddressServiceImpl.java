@@ -17,6 +17,7 @@ import com.fscut.courier.model.vo.factory.AddressVOFactory;
 import com.fscut.courier.service.AddressService;
 import com.fscut.courier.service.CommonService;
 import com.fscut.courier.utils.ValidateUtil;
+import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.naming.ldap.PagedResultsControl;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static com.fscut.courier.utils.ConstValue.DEFAULT;
-import static com.fscut.courier.utils.ConstValue.USER_NOT_EXIST;
+import static com.fscut.courier.utils.ConstValue.*;
 
 /**
  * @author lxw
@@ -72,7 +73,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
      * @return
      */
     @Override
-    public List<AddressVO> displayAddress(PageDTO pageDTO) {
+    public Map<String, Object> displayAddress(PageDTO pageDTO) {
         // 判断用户是否存在
         commonService.userExist(pageDTO.getUserId());
         // 分页查询
@@ -85,7 +86,10 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
             AddressVO addressVO = AddressVOFactory.createAddressVO(t);
             addressVOList.add(addressVO);
         });
-        return addressVOList;
+        return ImmutableMap.<String, Object>builder()
+                .put(PAGE_TOTAL, page.getTotal())
+                .put(ADDRESS_LIST, addressVOList)
+                .build();
     }
 
     /**
@@ -106,6 +110,26 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
         updateWrapper.eq("id", addressDTO.getAddressId());
         addressDao.update(address, updateWrapper);
     }
+
+    /**
+     * 删除收货地址
+     *
+     * @param addressDTO 收获地址信息
+     */
+    @Override
+    public void deleteAddress(AddressDTO addressDTO) {
+        // 判断用户是否存在
+        commonService.userExist(addressDTO.getUserId());
+        // 删除地址
+        addressDao.deleteById(addressDTO.getAddressId());
+        // 删除中间表
+        QueryWrapper<AddressUserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("address_id", addressDTO.getAddressId())
+                .eq("user_id", addressDTO.getUserId());
+        addressUserInfoDao.delete(queryWrapper);
+
+    }
+
 
     /**
      * 获取收货地址信息

@@ -9,10 +9,7 @@ import com.fscut.courier.utils.ResultUtil;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,10 +47,8 @@ public class AddressController {
      */
     @PostMapping("display")
     public ResultUtil.Result displayAddress(@RequestBody @Validated(PageDTO.Show.class) PageDTO pageDTO) {
-        List<AddressVO> addressList = addressService.displayAddress(pageDTO);
-        return ok(ImmutableMap.builder()
-                .put(ADDRESS_LIST, addressList)
-                .build());
+
+        return ok (addressService.displayAddress(pageDTO));
     }
 
     /**
@@ -65,6 +60,17 @@ public class AddressController {
     @PostMapping("update")
     public ResultUtil.Result updateAddress(@RequestBody @Validated(AddressDTO.Update.class) AddressDTO addressDTO) {
         addressService.updateAddress(addressDTO);
+        return ok();
+    }
+    /**
+     * 删除收获地址
+     *
+     * @param addressDTO 收获地址信息
+     * @return
+     */
+    @PostMapping("delete")
+    public ResultUtil.Result deleteAddress(@RequestBody @Validated(AddressDTO.Delete.class) AddressDTO addressDTO) {
+        addressService.deleteAddress(addressDTO);
         return ok();
     }
 }

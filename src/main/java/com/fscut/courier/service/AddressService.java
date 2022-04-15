@@ -7,6 +7,7 @@ import com.fscut.courier.model.po.Address;
 import com.fscut.courier.model.vo.AddressVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lxw
@@ -24,7 +25,7 @@ public interface AddressService extends IService<Address> {
      *
      * @param pageDTO 分页信息
      */
-    List<AddressVO> displayAddress(PageDTO pageDTO);
+    Map<String,Object> displayAddress(PageDTO pageDTO);
 
     /**
      * 修改收货地址
@@ -32,4 +33,11 @@ public interface AddressService extends IService<Address> {
      * @param addressDTO 收获地址信息
      */
     void updateAddress(AddressDTO addressDTO);
+
+    /**
+     * 删除收货地址
+     *
+     * @param addressDTO 收获地址信息
+     */
+    void deleteAddress(AddressDTO addressDTO);
 }

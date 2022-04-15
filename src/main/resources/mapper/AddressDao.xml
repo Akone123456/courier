@@ -6,7 +6,8 @@
     <select id="selectAddress" resultType="com.fscut.courier.model.po.Address">
         select id, consignee, phone, city, address, label, is_default
         from address
-        where id in (
+        where is_deleted = 0
+          and id in (
             select address_id
             from address_userinfo
             where user_id = #{userId}
@@ -18,6 +19,7 @@
         update address
         set is_default = #{isDefault}
         where is_default = 1
+          and is_deleted = 0
           and id in (
             select address_id
             from address_userinfo
