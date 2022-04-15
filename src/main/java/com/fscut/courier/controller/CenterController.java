@@ -112,7 +112,7 @@ public class CenterController {
      * @param adminDTO 管理员用户信息
      * @return
      */
-    @PostMapping("admin/updatepswd")
+    @PostMapping("admin/updatePswd")
     public ResultUtil.Result AdminUpdatePswd(@RequestBody @Validated({AdminDTO.UpdatePswd.class}) AdminDTO adminDTO) {
         adminService.updatePswd(adminDTO);
         return ok();
