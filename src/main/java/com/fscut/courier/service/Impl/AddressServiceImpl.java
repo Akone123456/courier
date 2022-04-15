@@ -52,17 +52,15 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
     @Override
     public void addAddress(AddressDTO addressDTO) {
         // 判断用户是否存在
-        int userId = addressDTO.getUserId();
-        UserInfo userInfo = userInfoDao.selectById(userId);
-        ValidateUtil.logicalNotNull(userInfo, USER_NOT_EXIST);
+        commonService.userExist(addressDTO.getUserId());
         // 当前为默认地址，清除其他默认地址
-        commonService.updateDefaultAddress(addressDTO.getIsDefault(), userId);
+        commonService.updateDefaultAddress(addressDTO.getIsDefault(), addressDTO.getUserId());
         // 保存address
         Address address = getAddress(addressDTO);
         addressDao.insert(address);
         // 保存address_userInfo
         AddressUserInfo addressUserInfo = new AddressUserInfo();
-        addressUserInfo.setUserId(userId);
+        addressUserInfo.setUserId(addressDTO.getUserId());
         addressUserInfo.setAddressId(address.getId());
         addressUserInfoDao.insert(addressUserInfo);
     }
@@ -75,6 +73,8 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
      */
     @Override
     public List<AddressVO> displayAddress(PageDTO pageDTO) {
+        // 判断用户是否存在
+        commonService.userExist(pageDTO.getUserId());
         // 分页查询
         Page<Address> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
         Page<Address> addressPage = addressDao.selectAddress(page, pageDTO.getUserId());
@@ -95,6 +95,8 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
      */
     @Override
     public void updateAddress(AddressDTO addressDTO) {
+        // 判断用户是否存在
+        commonService.userExist(addressDTO.getUserId());
         // 构建修改的字段
         Address address = getAddress(addressDTO);
         // 当前为默认地址，清除其他默认地址
