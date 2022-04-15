@@ -59,6 +59,10 @@ public class UserInfo {
      * 备注
      */
     private String note;
+//    /**
+//     * 角色
+//     */
+//    private String role;
     /**
      * 短信验证码
      */
