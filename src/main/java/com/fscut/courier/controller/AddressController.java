@@ -48,7 +48,7 @@ public class AddressController {
     @PostMapping("display")
     public ResultUtil.Result displayAddress(@RequestBody @Validated(PageDTO.Show.class) PageDTO pageDTO) {
 
-        return ok (addressService.displayAddress(pageDTO));
+        return ok(addressService.displayAddress(pageDTO));
     }
 
     /**
@@ -62,6 +62,7 @@ public class AddressController {
         addressService.updateAddress(addressDTO);
         return ok();
     }
+
     /**
      * 删除收获地址
      *
@@ -72,5 +73,16 @@ public class AddressController {
     public ResultUtil.Result deleteAddress(@RequestBody @Validated(AddressDTO.Delete.class) AddressDTO addressDTO) {
         addressService.deleteAddress(addressDTO);
         return ok();
+    }
+
+    /**
+     * 获取单个地址
+     *
+     * @param pageDTO 用户id和地址id
+     * @return
+     */
+    @PostMapping("single")
+    public ResultUtil.Result singleAddress(@RequestBody @Validated(PageDTO.Single.class) PageDTO pageDTO) {
+        return ok(addressService.singleAddress(pageDTO));
     }
 }

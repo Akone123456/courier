@@ -130,6 +130,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
 
     }
 
+    @Override
+    public AddressVO singleAddress(PageDTO pageDTO) {
+        Address address = addressDao.selectById(pageDTO.getAddressId());
+        return AddressVOFactory.createAddressVO(address);
+    }
+
 
     /**
      * 获取收货地址信息

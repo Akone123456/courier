@@ -18,6 +18,12 @@ public class PageDTO {
     @Min(value = 1, message = "用户id不能小于1", groups = {Show.class})
     private Integer userId;
     /**
+     * 收货地址id
+     */
+    @NotNull(message = "用户id不为空", groups = {Show.class, Single.class})
+    @Min(value = 1, message = "用户id不能小于1", groups = {Show.class, Single.class})
+    private Integer addressId;
+    /**
      * 页面大小
      */
     @NotNull(message = "页面大小不能为空", groups = {Show.class})
@@ -33,6 +39,10 @@ public class PageDTO {
     private Integer pageNum;
 
     public interface Show {
+
+    }
+
+    public interface Single {
 
     }
 }

@@ -40,4 +40,12 @@ public interface AddressService extends IService<Address> {
      * @param addressDTO 收获地址信息
      */
     void deleteAddress(AddressDTO addressDTO);
+
+    /**
+     *
+     *
+     * @param pageDTO
+     * @return
+     */
+    AddressVO singleAddress(PageDTO pageDTO);
 }
