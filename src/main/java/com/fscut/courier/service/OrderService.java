@@ -67,4 +67,12 @@ public interface OrderService extends IService<Order> {
      * @return
      */
     Map<String,Object> senderOrder(PageDTO pageDTO);
+
+    /**
+     * 配送员-删除订单
+     *
+     * @param orderDTO 订单信息
+     * @return
+     */
+    void senderDeleteOrder(OrderDTO orderDTO);
 }

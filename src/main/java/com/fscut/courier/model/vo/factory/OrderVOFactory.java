@@ -33,4 +33,17 @@ public class OrderVOFactory {
                 .createTime(order.getCreateTime())
                 .build();
     }
+    public static OrderVO createSenderOrderVO1(Order order) {
+        return OrderVO.builder()
+                .orderId(order.getId())
+                .orderStatus(order.getOrderStatus())
+                .courierNumber(order.getCourierNumber())
+                .takeUserName(order.getTakeUserName())
+                .phone(order.getPhone())
+                .courierAddress(order.getCourierAddress())
+                .bounty(order.getBounty())
+                .note(order.getNote())
+                .createTime(order.getCreateTime())
+                .build();
+    }
 }

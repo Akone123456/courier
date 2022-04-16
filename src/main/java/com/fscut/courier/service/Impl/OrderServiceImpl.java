@@ -221,12 +221,29 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
         Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
         Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
         orderPage.getRecords().forEach(order -> {
-            OrderVO orderVO = OrderVOFactory.createSenderOrderVO(order);
+            OrderVO orderVO = OrderVOFactory.createSenderOrderVO1(order);
             orderVOList.add(orderVO);
         });
         return ImmutableMap.<String, Object>builder()
                 .put(PAGE_TOTAL, page.getTotal())
                 .put(ORDER_LIST, orderVOList)
                 .build();
+    }
+
+    /**
+     * 配送员-删除订单
+     *
+     * @param orderDTO 订单信息
+     * @return
+     */
+    @Override
+    public void senderDeleteOrder(OrderDTO orderDTO) {
+        // 删除订单表
+        orderDao.deleteById(orderDTO.getOrderId());
+        // 删除用户-订单-配送员信息表
+        QueryWrapper<UserOrderSender> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", orderDTO.getUserId())
+                .eq("order_id", orderDTO.getOrderId());
+        userOrderSenderDao.delete(queryWrapper);
     }
 }

@@ -106,5 +106,15 @@ public class OrderController {
         return ok(orderService.senderOrder(pageDTO));
     }
 
-
+    /**
+     * 配送员-删除订单
+     *
+     * @param orderDTO 订单信息
+     * @return
+     */
+    @PostMapping("sender/delete")
+    public ResultUtil.Result senderDeleteOrder(@RequestBody @Validated(OrderDTO.UserDelete.class) OrderDTO orderDTO){
+        orderService.senderDeleteOrder(orderDTO);
+        return ok();
+    }
 }
