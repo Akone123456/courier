@@ -50,5 +50,21 @@ public interface OrderService extends IService<Order> {
      * @param pageDTO 分页信息
      * @return
      */
-    Map<String, Object> senderOrder(PageDTO pageDTO);
+    Map<String, Object> orderHall(PageDTO pageDTO);
+
+    /**
+     * 配送员-接单,配送,完成.
+     *
+     * @param orderDTO 订单信息
+     * @return
+     */
+    void receiveOrder(OrderDTO orderDTO);
+
+    /**
+     * 配送员-我的订单
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
+    Map<String,Object> senderOrder(PageDTO pageDTO);
 }

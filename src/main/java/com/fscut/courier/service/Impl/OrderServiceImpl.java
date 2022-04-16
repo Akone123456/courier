@@ -149,11 +149,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
      * @return
      */
     @Override
-    public Map<String, Object> senderOrder(PageDTO pageDTO) {
+    public Map<String, Object> orderHall(PageDTO pageDTO) {
         // 获取已支付-未接单的订单
         LambdaQueryWrapper<Order> querylambdaWrapper = new LambdaQueryWrapper<>();
         // 构建查询条件
-        querylambdaWrapper.between(ObjectUtils.isNotNull(pageDTO.getStartTime())
+        querylambdaWrapper
+                .eq(Order::getPayStatus, PayStatusEnum.HAVE_PAY.getStatus())
+                .eq(Order::getOrderStatus, OrderStatusEnum.NOT_ORDER.getStatus())
+                .between(ObjectUtils.isNotNull(pageDTO.getStartTime())
                         && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime());
         // 构造返回数据
         List<OrderVO> orderVOList = new ArrayList<>();
@@ -161,7 +164,64 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
         Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
         Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
         orderPage.getRecords().forEach(order -> {
-            OrderVO orderVO = OrderVOFactory.createOrderVO(order);
+            OrderVO orderVO = OrderVOFactory.createSenderOrderVO(order);
+            orderVOList.add(orderVO);
+        });
+        return ImmutableMap.<String, Object>builder()
+                .put(PAGE_TOTAL, page.getTotal())
+                .put(ORDER_LIST, orderVOList)
+                .build();
+    }
+
+    /**
+     * 配送员-接单,配送,完成.
+     *
+     * @param orderDTO 订单信息
+     * @return
+     */
+    @Override
+    public void receiveOrder(OrderDTO orderDTO) {
+        // 修改订单状态
+        UpdateWrapper<Order> orderWrapper = new UpdateWrapper<>();
+        orderWrapper.set("order_status", orderDTO.getOrderStatus())
+                .eq("id", orderDTO.getOrderId());
+        orderDao.update(null, orderWrapper);
+        // 修改用户-订单-配送员中间表
+        UpdateWrapper<UserOrderSender> userOrderSenderUpdateWrapper = new UpdateWrapper<>();
+        userOrderSenderUpdateWrapper.set("sender_id", orderDTO.getUserId())
+                .eq("order_id", orderDTO.getOrderId());
+        userOrderSenderDao.update(null, userOrderSenderUpdateWrapper);
+    }
+
+    /**
+     * 配送员-我的订单
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
+    @Override
+    public Map<String, Object> senderOrder(PageDTO pageDTO) {
+        // 查询与当前用户有关的订单
+        QueryWrapper<UserOrderSender> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("sender_id", pageDTO.getUserId());
+        List<UserOrderSender> userOrderSenderList = userOrderSenderDao.selectList(queryWrapper);
+        List<Integer> orderIdList = userOrderSenderList.stream().map(UserOrderSender::getOrderId).collect(toList());
+        // 获取订单
+        LambdaQueryWrapper<Order> querylambdaWrapper = new LambdaQueryWrapper<>();
+        // 构建查询条件
+        querylambdaWrapper.eq(ObjectUtils.isNotNull(pageDTO.getOrderStatus()), Order::getOrderStatus, pageDTO.getOrderStatus())
+                .between(ObjectUtils.isNotNull(pageDTO.getStartTime())
+                        && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime())
+                .in(ObjectUtils.isNotNull(orderIdList), Order::getId, orderIdList)
+                .orderByAsc(Order::getOrderStatus);
+
+        // 构造返回数据
+        List<OrderVO> orderVOList = new ArrayList<>();
+        // 分页
+        Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
+        Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
+        orderPage.getRecords().forEach(order -> {
+            OrderVO orderVO = OrderVOFactory.createSenderOrderVO(order);
             orderVOList.add(orderVO);
         });
         return ImmutableMap.<String, Object>builder()

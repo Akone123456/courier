@@ -78,10 +78,32 @@ public class OrderController {
      * @param pageDTO 分页信息
      * @return
      */
-    @GetMapping("sender")
-    public ResultUtil.Result senderOrder(@RequestBody @Validated(PageDTO.User.class) PageDTO pageDTO) {
-        orderService.senderOrder(pageDTO);
+    @PostMapping("orderHall")
+    public ResultUtil.Result orderHall(@RequestBody @Validated(PageDTO.User.class) PageDTO pageDTO) {
+        return ok(orderService.orderHall(pageDTO));
+    }
+
+    /**
+     * 配送员-接单,配送,完成.
+     *
+     * @param orderDTO 订单信息
+     * @return
+     */
+    @PostMapping("receiveOrder")
+    public ResultUtil.Result receiveOrder(@RequestBody @Validated(OrderDTO.SenderRecieve.class) OrderDTO orderDTO) {
+        orderService.receiveOrder(orderDTO);
         return ok();
+    }
+
+    /**
+     * 配送员-我的订单
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
+    @PostMapping("sender")
+    public ResultUtil.Result senderOrder(@RequestBody @Validated(PageDTO.User.class) PageDTO pageDTO){
+        return ok(orderService.senderOrder(pageDTO));
     }
 
 

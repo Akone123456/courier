@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -17,15 +18,15 @@ public class OrderDTO {
     /**
      * 用户id
      */
-    @NotNull(message = "用户id不为空", groups = {Save.class, UserDelete.class})
-    @Min(value = 1, message = "用户id不能小于1", groups = {Save.class, UserDelete.class})
+    @NotNull(message = "用户id不为空", groups = {Save.class, UserDelete.class,SenderRecieve.class})
+    @Min(value = 1, message = "用户id不能小于1", groups = {Save.class, UserDelete.class,SenderRecieve.class})
     private Integer userId;
     /**
      * 订单id
      */
 
-    @NotNull(message = "订单id不为空", groups = {UserDelete.class})
-    @Min(value = 1, message = "订单id不能小于1", groups = {UserDelete.class})
+    @NotNull(message = "订单id不为空", groups = {UserDelete.class,SenderRecieve.class})
+    @Min(value = 1, message = "订单id不能小于1", groups = {UserDelete.class,SenderRecieve.class})
     private Integer orderId;
     /**
      * 取件人姓名
@@ -62,11 +63,22 @@ public class OrderDTO {
     @NotNull(message = "赏金不能为null", groups = {Save.class})
     private BigDecimal bounty;
 
+    /**
+     * 订单状态
+     */
+    @NotNull(message = "订单状态不能为null",groups = {SenderRecieve.class})
+    @Max(value = 5,message = "订单状态不能大于5",groups = {SenderRecieve.class})
+    @Min(value = 1,message = "订单状态不能小于1",groups = {SenderRecieve.class})
+    private Integer orderStatus;
+
     public interface Save {
 
     }
 
     public interface UserDelete {
+
+    }
+    public interface SenderRecieve {
 
     }
 }
