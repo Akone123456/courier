@@ -39,7 +39,7 @@ public class OrderController {
     /**
      * 普通用户-我的订单
      *
-     * @param pageDTO  订单查询条件
+     * @param pageDTO 订单查询条件
      * @return
      */
     @PostMapping("user")
@@ -47,10 +47,11 @@ public class OrderController {
 
         return ok(orderService.userOrder(pageDTO));
     }
+
     /**
      * 普通用户-删除订单
      *
-     * @param orderDTO  订单信息
+     * @param orderDTO 订单信息
      * @return
      */
     @PostMapping("user/delete")
@@ -58,9 +59,28 @@ public class OrderController {
         orderService.userDeleteOrder(orderDTO);
         return ok();
     }
+
+    /**
+     * 普通用户-取消订单
+     *
+     * @param orderId 订单id
+     * @return
+     */
     @GetMapping("cancel/{orderId}")
-    public ResultUtil.Result userCancelOrder(@PathVariable("orderId") Integer orderId){
+    public ResultUtil.Result userCancelOrder(@PathVariable("orderId") Integer orderId) {
         orderService.userCancelOrder(orderId);
+        return ok();
+    }
+
+    /**
+     * 配送员-接单大厅
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
+    @GetMapping("sender")
+    public ResultUtil.Result senderOrder(@RequestBody @Validated(PageDTO.User.class) PageDTO pageDTO) {
+        orderService.senderOrder(pageDTO);
         return ok();
     }
 

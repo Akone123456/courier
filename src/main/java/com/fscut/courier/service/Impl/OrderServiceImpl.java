@@ -3,6 +3,7 @@ package com.fscut.courier.service.Impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fscut.courier.dao.OrderDao;
 import com.fscut.courier.dao.UserOrderSenderDao;
@@ -27,6 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.fscut.courier.utils.ConstValue.ORDER_LIST;
+import static com.fscut.courier.utils.ConstValue.PAGE_TOTAL;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -94,11 +96,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
                 .in(ObjectUtils.isNotNull(orderIdList), Order::getId, orderIdList);
         // 构造返回数据
         List<OrderVO> orderVOList = new ArrayList<>();
-        orderDao.selectList(querylambdaWrapper).forEach(order -> {
+        // 分页
+        Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
+        Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
+        orderPage.getRecords().forEach(order -> {
             OrderVO orderVO = OrderVOFactory.createOrderVO(order);
             orderVOList.add(orderVO);
         });
         return ImmutableMap.<String, Object>builder()
+                .put(PAGE_TOTAL, page.getTotal())
                 .put(ORDER_LIST, orderVOList)
                 .build();
     }
@@ -122,11 +128,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
         userOrderSenderDao.delete(queryWrapper);
     }
 
+    /**
+     * 普通用户-取消订单
+     *
+     * @param orderId 订单id
+     * @return
+     */
     @Override
     public void userCancelOrder(Integer orderId) {
         UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.set("order_status",OrderStatusEnum.CANCEL_ORDER.getStatus())
-                .eq("id",orderId);
-        orderDao.update(null,updateWrapper);
+        updateWrapper.set("order_status", OrderStatusEnum.CANCEL_ORDER.getStatus())
+                .eq("id", orderId);
+        orderDao.update(null, updateWrapper);
+    }
+
+    /**
+     * 配送员-接单大厅
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
+    @Override
+    public void senderOrder(PageDTO pageDTO) {
+
     }
 }

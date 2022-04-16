@@ -36,5 +36,19 @@ public interface OrderService extends IService<Order> {
      */
     void userDeleteOrder(OrderDTO orderDTO);
 
+    /**
+     * 普通用户-取消订单
+     *
+     * @param orderId 订单id
+     * @return
+     */
     void userCancelOrder(Integer orderId);
+
+    /**
+     * 配送员-接单大厅
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
+    void senderOrder(PageDTO pageDTO);
 }
