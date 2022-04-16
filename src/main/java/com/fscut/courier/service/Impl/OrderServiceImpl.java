@@ -149,7 +149,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
      * @return
      */
     @Override
-    public void senderOrder(PageDTO pageDTO) {
-
+    public Map<String, Object> senderOrder(PageDTO pageDTO) {
+        // 获取已支付-未接单的订单
+        LambdaQueryWrapper<Order> querylambdaWrapper = new LambdaQueryWrapper<>();
+        // 构建查询条件
+        querylambdaWrapper.between(ObjectUtils.isNotNull(pageDTO.getStartTime())
+                        && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime());
+        // 构造返回数据
+        List<OrderVO> orderVOList = new ArrayList<>();
+        // 分页
+        Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
+        Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
+        orderPage.getRecords().forEach(order -> {
+            OrderVO orderVO = OrderVOFactory.createOrderVO(order);
+            orderVOList.add(orderVO);
+        });
+        return ImmutableMap.<String, Object>builder()
+                .put(PAGE_TOTAL, page.getTotal())
+                .put(ORDER_LIST, orderVOList)
+                .build();
     }
 }

@@ -50,5 +50,5 @@ public interface OrderService extends IService<Order> {
      * @param pageDTO 分页信息
      * @return
      */
-    void senderOrder(PageDTO pageDTO);
+    Map<String, Object> senderOrder(PageDTO pageDTO);
 }
