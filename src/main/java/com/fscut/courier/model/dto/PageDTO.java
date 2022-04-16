@@ -20,8 +20,8 @@ public class PageDTO {
     /**
      * 收货地址id
      */
-    @NotNull(message = "用户id不为空", groups = {Show.class, Single.class})
-    @Min(value = 1, message = "用户id不能小于1", groups = {Show.class, Single.class})
+    @NotNull(message = "收货地址id不为空", groups = { Single.class})
+    @Min(value = 1, message = "收货地址id不能小于1", groups = { Single.class})
     private Integer addressId;
     /**
      * 页面大小
