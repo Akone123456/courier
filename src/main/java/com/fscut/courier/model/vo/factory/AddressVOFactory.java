@@ -22,4 +22,9 @@ public class AddressVOFactory {
                 .isDefault(address.getIsDefault())
                 .build();
     }
+    public static AddressVO getAddressDetail(String addressDetail) {
+        return AddressVO.builder()
+                .addressDetail(addressDetail)
+                .build();
+    }
 }

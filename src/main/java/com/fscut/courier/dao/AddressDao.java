@@ -16,4 +16,5 @@ import java.util.List;
 public interface AddressDao extends BaseMapper<Address> {
     Page<Address> selectAddress(@Param("page") Page<Address> page, @Param("userId") Integer userId);
     void updateIsDefault(@Param("isDefault") Integer isDefault,@Param("userId")Integer userId);
+    List<Address> selectAllByUserId(@Param("userId") Integer userId);
 }

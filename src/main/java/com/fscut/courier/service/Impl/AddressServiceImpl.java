@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.ldap.PagedResultsControl;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -134,6 +135,18 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
     public AddressVO singleAddress(PageDTO pageDTO) {
         Address address = addressDao.selectById(pageDTO.getAddressId());
         return AddressVOFactory.createAddressVO(address);
+    }
+
+    @Override
+    public List<AddressVO> getAddress(Integer userId) {
+        List<Address> addressList = addressDao.selectAllByUserId(userId);
+        List<AddressVO> addressVOList = new ArrayList<>();
+        addressList.forEach(address -> {
+            String addressDetail = address.getCity() + address.getAddress();
+            AddressVO addressVO = AddressVOFactory.getAddressDetail(addressDetail);
+            addressVOList.add(addressVO);
+        });
+        return addressVOList;
     }
 
 

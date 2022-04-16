@@ -12,7 +12,7 @@
             from address_userinfo
             where user_id = #{userId}
         )
-        order by update_time desc
+        order by create_time desc
     </select>
 
     <update id="updateIsDefault">
@@ -27,6 +27,17 @@
         )
 
     </update>
+
+    <select id="selectAllByUserId" resultType="com.fscut.courier.model.po.Address">
+        select city, address
+        from address
+        where is_deleted = 0 and id in (
+            select address_id
+            from address_userinfo
+            where user_id = #{userId} and is_deleted = 0
+            )
+        order by is_default desc
+    </select>
 
 
 </mapper>

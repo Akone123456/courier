@@ -48,4 +48,12 @@ public interface AddressService extends IService<Address> {
      * @return
      */
     AddressVO singleAddress(PageDTO pageDTO);
+
+    /**
+     * 获取用户所有的详细信息地址
+     *
+     * @param userId 用户id
+     * @return
+     */
+    List<AddressVO> getAddress(Integer userId);
 }

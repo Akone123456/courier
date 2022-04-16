@@ -22,5 +22,6 @@ public class ConstValue {
     public static final Integer DEFAULT = 1;
     public static final Integer NOT_DEFAULT = 0;
     public static final String PAGE_TOTAL = "pageTotal";
+    public static final String ORDER_LIST = "orderList";
 
 }

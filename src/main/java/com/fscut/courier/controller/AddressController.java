@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static com.fscut.courier.utils.ConstValue.ADDRESS_LIST;
@@ -84,5 +87,11 @@ public class AddressController {
     @PostMapping("single")
     public ResultUtil.Result singleAddress(@RequestBody @Validated(PageDTO.Single.class) PageDTO pageDTO) {
         return ok(addressService.singleAddress(pageDTO));
+    }
+
+
+    @GetMapping("get/{userId}")
+    public ResultUtil.Result getAddress( @PathVariable("userId") Integer userId){
+        return ok(addressService.getAddress(userId));
     }
 }
