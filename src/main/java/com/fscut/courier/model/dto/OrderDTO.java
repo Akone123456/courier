@@ -26,8 +26,7 @@ public class OrderDTO {
      */
 
     @NotNull(message = "订单id不为空", groups = {UserDelete.class,SenderRecieve.class})
-    @Min(value = 1, message = "订单id不能小于1", groups = {UserDelete.class,SenderRecieve.class})
-    private Integer orderId;
+    private String orderId;
     /**
      * 取件人姓名
      */

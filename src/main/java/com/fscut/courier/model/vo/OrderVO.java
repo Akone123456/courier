@@ -17,7 +17,7 @@ public class OrderVO {
     /**
      * 订单编号
      */
-    private Integer orderId;
+    private String orderId;
     /**
      * 快递单号
      */

@@ -31,7 +31,7 @@ public interface OrderService extends IService<Order> {
     /**
      * 普通用户-删除订单
      *
-     * @param orderDTO  订单信息
+     * @param orderDTO 订单信息
      * @return
      */
     void userDeleteOrder(OrderDTO orderDTO);
@@ -42,7 +42,7 @@ public interface OrderService extends IService<Order> {
      * @param orderId 订单id
      * @return
      */
-    void userCancelOrder(Integer orderId);
+    void userCancelOrder(String orderId,Integer userId);
 
     /**
      * 配送员-接单大厅
@@ -66,13 +66,13 @@ public interface OrderService extends IService<Order> {
      * @param pageDTO 分页信息
      * @return
      */
-    Map<String,Object> senderOrder(PageDTO pageDTO);
+    Map<String, Object> senderOrder(PageDTO pageDTO);
 
-    /**
-     * 配送员-删除订单
-     *
-     * @param orderDTO 订单信息
-     * @return
-     */
-    void senderDeleteOrder(OrderDTO orderDTO);
+    ///**
+    // * 配送员-删除订单
+    // *
+    // * @param orderDTO 订单信息
+    // * @return
+    // */
+    //void senderDeleteOrder(OrderDTO orderDTO);
 }

@@ -3,40 +3,34 @@ package com.fscut.courier.model.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.fscut.courier.model.po.base.BaseEntity;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @author lxw
  */
 @Data
-@TableName("user_order_sender")
-public class UserOrderSender {
+public class OrderLog extends BaseEntity {
     /**
      * 主键id
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
     /**
-     * 订单id
+     * 订单编号
      */
     private String orderId;
     /**
-     * 用户id
+     * 日志内容
      */
-    private Integer userId;
-    /**
-     * 配送员id
-     */
-    private Integer senderId;
-    /**
-     * 用户逻辑删除
-     */
-    private Integer userIsDeleted;
+    private String content;
     /**
      * 逻辑删除
      */
     @TableLogic
-    private Integer orderIsDeleted;
+    private Integer isDeleted;
+
 
 }

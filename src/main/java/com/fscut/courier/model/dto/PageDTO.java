@@ -20,6 +20,10 @@ public class PageDTO {
     @Min(value = 1, message = "用户id不能小于1", groups = {Show.class, User.class, Sender.class})
     private Integer userId;
     /**
+     * 订单id
+     */
+    private String orderId;
+    /**
      * 收货地址id
      */
     @NotNull(message = "收货地址id不为空", groups = {Single.class})
@@ -28,16 +32,16 @@ public class PageDTO {
     /**
      * 页面大小
      */
-    @NotNull(message = "页面大小不能为空", groups = {Show.class, User.class, Sender.class})
-    @Min(value = 1, message = "页面大小不能小于1", groups = {Show.class, User.class, Sender.class})
-    @Max(value = 10, message = "页面大小不能大于10", groups = {Show.class, User.class, Sender.class})
+    @NotNull(message = "页面大小不能为空", groups = {Show.class, User.class, Sender.class, AdminOrder.class})
+    @Min(value = 1, message = "页面大小不能小于1", groups = {Show.class, User.class, Sender.class, AdminOrder.class})
+    @Max(value = 10, message = "页面大小不能大于10", groups = {Show.class, User.class, Sender.class, AdminOrder.class})
     private Integer pageSize;
     /**
      * 页码
      */
-    @NotNull(message = "页码不能为空", groups = {Show.class, User.class, Sender.class})
-    @Min(value = 1, message = "页码不能小于1", groups = {Show.class, User.class, Sender.class})
-    @Max(value = 10, message = "页码不能大于10", groups = {Show.class, User.class, Sender.class})
+    @NotNull(message = "页码不能为空", groups = {Show.class, User.class, Sender.class, AdminOrder.class})
+    @Min(value = 1, message = "页码不能小于1", groups = {Show.class, User.class, Sender.class, AdminOrder.class})
+    @Max(value = 10, message = "页码不能大于10", groups = {Show.class, User.class, Sender.class, AdminOrder.class})
     private Integer pageNum;
 
     /**
@@ -71,6 +75,10 @@ public class PageDTO {
     }
 
     public interface Sender {
+
+    }
+
+    public interface AdminOrder {
 
     }
 }

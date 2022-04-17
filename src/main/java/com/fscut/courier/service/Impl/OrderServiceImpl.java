@@ -6,10 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fscut.courier.dao.OrderDao;
+import com.fscut.courier.dao.SenderDao;
+import com.fscut.courier.dao.UserInfoDao;
 import com.fscut.courier.dao.UserOrderSenderDao;
 import com.fscut.courier.model.dto.OrderDTO;
 import com.fscut.courier.model.dto.PageDTO;
 import com.fscut.courier.model.po.Order;
+import com.fscut.courier.model.po.Sender;
+import com.fscut.courier.model.po.UserInfo;
 import com.fscut.courier.model.po.UserOrderSender;
 import com.fscut.courier.model.vo.OrderVO;
 import com.fscut.courier.model.vo.factory.OrderVOFactory;
@@ -27,8 +31,7 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.fscut.courier.utils.ConstValue.ORDER_LIST;
-import static com.fscut.courier.utils.ConstValue.PAGE_TOTAL;
+import static com.fscut.courier.utils.ConstValue.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -44,6 +47,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
     private UserOrderSenderDao userOrderSenderDao;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private UserInfoDao userInfoDao;
+    @Autowired
+    private SenderDao senderDao;
 
     /**
      * 普通用户下单
@@ -56,6 +63,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
         commonService.userExist(orderDTO.getUserId());
         // 订单信息
         Order order = new Order();
+        order.setOrderId(String.valueOf(System.currentTimeMillis()));
         order.setTakeUserName(orderDTO.getTakeUserName());
         order.setPhone(orderDTO.getPhone());
         order.setCourierNumber(orderDTO.getCourierNumber());
@@ -68,8 +76,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
         // 用户-订单-配送员
         UserOrderSender userOrderSender = new UserOrderSender();
         userOrderSender.setUserId(orderDTO.getUserId());
-        userOrderSender.setOrderId(order.getId());
+        userOrderSender.setOrderId(order.getOrderId());
         userOrderSenderDao.insert(userOrderSender);
+        // 记录日志
+        UserInfo userInfo = userInfoDao.selectById(orderDTO.getUserId());
+        String content = "普通用户:" + userInfo.getUsername() + ",下单啦!!!";
+        commonService.recordLog(order.getOrderId(), content);
     }
 
     /**
@@ -85,26 +97,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
         // 查询与当前用户有关的订单
         QueryWrapper<UserOrderSender> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", pageDTO.getUserId());
+        queryWrapper.eq("user_is_deleted", NOT_DELETED);
         List<UserOrderSender> userOrderSenderList = userOrderSenderDao.selectList(queryWrapper);
-        List<Integer> orderIdList = userOrderSenderList.stream().map(UserOrderSender::getOrderId).collect(toList());
-        // 获取订单
-        LambdaQueryWrapper<Order> querylambdaWrapper = new LambdaQueryWrapper<>();
-        // 构建查询条件
-        querylambdaWrapper.eq(ObjectUtils.isNotNull(pageDTO.getOrderStatus()), Order::getOrderStatus, pageDTO.getOrderStatus())
-                .between(ObjectUtils.isNotNull(pageDTO.getStartTime())
-                        && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime())
-                .in(ObjectUtils.isNotNull(orderIdList), Order::getId, orderIdList);
+        List<String> orderIdList = userOrderSenderList.stream().map(UserOrderSender::getOrderId).collect(toList());
         // 构造返回数据
         List<OrderVO> orderVOList = new ArrayList<>();
-        // 分页
-        Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
-        Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
-        orderPage.getRecords().forEach(order -> {
-            OrderVO orderVO = OrderVOFactory.createOrderVO(order);
-            orderVOList.add(orderVO);
-        });
+        if (ObjectUtils.isNotNull(orderIdList)) {
+            // 获取订单
+            LambdaQueryWrapper<Order> querylambdaWrapper = new LambdaQueryWrapper<>();
+            // 构建查询条件
+            querylambdaWrapper.eq(ObjectUtils.isNotNull(pageDTO.getOrderStatus()), Order::getOrderStatus, pageDTO.getOrderStatus())
+                    .between(ObjectUtils.isNotNull(pageDTO.getStartTime())
+                            && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime())
+                    .in(ObjectUtils.isNotNull(orderIdList), Order::getOrderId, orderIdList);
+            // 分页
+            Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
+            Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
+            orderPage.getRecords().forEach(order -> {
+                OrderVO orderVO = OrderVOFactory.createOrderVO(order);
+                orderVOList.add(orderVO);
+            });
+            return ImmutableMap.<String, Object>builder()
+                    .put(PAGE_TOTAL, page.getTotal())
+                    .put(ORDER_LIST, orderVOList)
+                    .build();
+        }
         return ImmutableMap.<String, Object>builder()
-                .put(PAGE_TOTAL, page.getTotal())
+                .put(PAGE_TOTAL, 0)
                 .put(ORDER_LIST, orderVOList)
                 .build();
     }
@@ -119,13 +138,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
     public void userDeleteOrder(OrderDTO orderDTO) {
         // 判断用户是否存在
         commonService.userExist(orderDTO.getUserId());
-        // 删除订单表
-        orderDao.deleteById(orderDTO.getOrderId());
-        // 删除用户-订单-配送员信息表
-        QueryWrapper<UserOrderSender> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", orderDTO.getUserId())
+        // 用户删除订单,删除用户-订单-配送员信息表
+        UpdateWrapper<UserOrderSender> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("user_is_deleted", DELETED)
+                .eq("user_id", orderDTO.getUserId())
                 .eq("order_id", orderDTO.getOrderId());
-        userOrderSenderDao.delete(queryWrapper);
+        userOrderSenderDao.update(null, updateWrapper);
+        // 记录日志
+        UserInfo userInfo = userInfoDao.selectById(orderDTO.getUserId());
+        String content = "普通用户:" + userInfo.getUsername() + ",删除订单!!!";
+        commonService.recordLog(orderDTO.getOrderId(), content);
     }
 
     /**
@@ -135,11 +157,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
      * @return
      */
     @Override
-    public void userCancelOrder(Integer orderId) {
+    public void userCancelOrder(String orderId, Integer userId) {
         UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("order_status", OrderStatusEnum.CANCEL_ORDER.getStatus())
-                .eq("id", orderId);
+                .set("pay_status", PayStatusEnum.HAVE_REFUND.getStatus())
+                .eq("order_id", orderId);
         orderDao.update(null, updateWrapper);
+        // 记录日志
+        UserInfo userInfo = userInfoDao.selectById(userId);
+        String content = "普通用户:" + userInfo.getUsername() + ",取消订单!!!";
+        commonService.recordLog(orderId, content);
     }
 
     /**
@@ -184,13 +211,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
         // 修改订单状态
         UpdateWrapper<Order> orderWrapper = new UpdateWrapper<>();
         orderWrapper.set("order_status", orderDTO.getOrderStatus())
-                .eq("id", orderDTO.getOrderId());
+                .eq("order_id", orderDTO.getOrderId());
         orderDao.update(null, orderWrapper);
         // 修改用户-订单-配送员中间表
         UpdateWrapper<UserOrderSender> userOrderSenderUpdateWrapper = new UpdateWrapper<>();
         userOrderSenderUpdateWrapper.set("sender_id", orderDTO.getUserId())
                 .eq("order_id", orderDTO.getOrderId());
         userOrderSenderDao.update(null, userOrderSenderUpdateWrapper);
+        // 记录日志
+        Sender sender = senderDao.selectById(orderDTO.getUserId());
+        String content = "";
+        if (orderDTO.getOrderStatus().equals(OrderStatusEnum.HAVE_ORDER.getStatus())) {
+            content = "配送员:" + sender.getUsername() + ",已经接单!!!";
+        } else if (orderDTO.getOrderStatus().equals(OrderStatusEnum.DISTRIBUTION.getStatus())) {
+            content = "配送员:" + sender.getUsername() + ",正在配送中!!!";
+        } else if (orderDTO.getOrderStatus().equals(OrderStatusEnum.FINISH_ORDER.getStatus())) {
+            content = "配送员:" + sender.getUsername() + ",完成订单!!!";
+        }
+        commonService.recordLog(orderDTO.getOrderId(), content);
     }
 
     /**
@@ -205,45 +243,53 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
         QueryWrapper<UserOrderSender> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("sender_id", pageDTO.getUserId());
         List<UserOrderSender> userOrderSenderList = userOrderSenderDao.selectList(queryWrapper);
-        List<Integer> orderIdList = userOrderSenderList.stream().map(UserOrderSender::getOrderId).collect(toList());
-        // 获取订单
-        LambdaQueryWrapper<Order> querylambdaWrapper = new LambdaQueryWrapper<>();
-        // 构建查询条件
-        querylambdaWrapper.eq(ObjectUtils.isNotNull(pageDTO.getOrderStatus()), Order::getOrderStatus, pageDTO.getOrderStatus())
-                .between(ObjectUtils.isNotNull(pageDTO.getStartTime())
-                        && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime())
-                .in(ObjectUtils.isNotNull(orderIdList), Order::getId, orderIdList)
-                .orderByAsc(Order::getOrderStatus);
+        List<String> orderIdList = userOrderSenderList.stream().map(UserOrderSender::getOrderId).collect(toList());
 
-        // 构造返回数据
         List<OrderVO> orderVOList = new ArrayList<>();
-        // 分页
-        Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
-        Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
-        orderPage.getRecords().forEach(order -> {
-            OrderVO orderVO = OrderVOFactory.createSenderOrderVO1(order);
-            orderVOList.add(orderVO);
-        });
+
+        if (ObjectUtils.isNotNull(orderIdList)) {
+            // 获取订单
+            LambdaQueryWrapper<Order> querylambdaWrapper = new LambdaQueryWrapper<>();
+            // 构建查询条件
+            querylambdaWrapper.eq(ObjectUtils.isNotNull(pageDTO.getOrderStatus()), Order::getOrderStatus, pageDTO.getOrderStatus())
+                    .between(ObjectUtils.isNotNull(pageDTO.getStartTime())
+                            && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime())
+                    .in(Order::getOrderId, orderIdList)
+                    .orderByAsc(Order::getOrderStatus);
+
+
+            // 分页
+            Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
+            Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
+            orderPage.getRecords().forEach(order -> {
+                OrderVO orderVO = OrderVOFactory.createSenderOrderVO1(order);
+                orderVOList.add(orderVO);
+            });
+            return ImmutableMap.<String, Object>builder()
+                    .put(PAGE_TOTAL, page.getTotal())
+                    .put(ORDER_LIST, orderVOList)
+                    .build();
+        }
         return ImmutableMap.<String, Object>builder()
-                .put(PAGE_TOTAL, page.getTotal())
+                .put(PAGE_TOTAL, 0)
                 .put(ORDER_LIST, orderVOList)
                 .build();
     }
 
-    /**
-     * 配送员-删除订单
-     *
-     * @param orderDTO 订单信息
-     * @return
-     */
-    @Override
-    public void senderDeleteOrder(OrderDTO orderDTO) {
-        // 删除订单表
-        orderDao.deleteById(orderDTO.getOrderId());
-        // 删除用户-订单-配送员信息表
-        QueryWrapper<UserOrderSender> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", orderDTO.getUserId())
-                .eq("order_id", orderDTO.getOrderId());
-        userOrderSenderDao.delete(queryWrapper);
-    }
+    ///**
+    // * 配送员-删除订单
+    // *
+    // * @param orderDTO 订单信息
+    // * @return
+    // */
+    //@Override
+    //public void senderDeleteOrder(OrderDTO orderDTO) {
+    //    // 删除订单表
+    //    orderDao.deleteById(orderDTO.getOrderId());
+    //    // 删除用户-订单-配送员信息表
+    //    QueryWrapper<UserOrderSender> queryWrapper = new QueryWrapper<>();
+    //    queryWrapper.eq("user_id", orderDTO.getUserId())
+    //            .eq("order_id", orderDTO.getOrderId());
+    //    userOrderSenderDao.delete(queryWrapper);
+    //}
 }

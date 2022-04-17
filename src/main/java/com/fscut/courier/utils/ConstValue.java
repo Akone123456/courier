@@ -23,5 +23,8 @@ public class ConstValue {
     public static final Integer NOT_DEFAULT = 0;
     public static final String PAGE_TOTAL = "pageTotal";
     public static final String ORDER_LIST = "orderList";
+    public static final Integer DELETED = 1;
+    public static final Integer NOT_DELETED = 0;
+    public static final String ORDER_LOG_LIST = "orderLogList";
 
 }

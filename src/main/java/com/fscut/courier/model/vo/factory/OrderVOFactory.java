@@ -13,7 +13,7 @@ public class OrderVOFactory {
 
     public static OrderVO createOrderVO(Order order) {
         return OrderVO.builder()
-                .orderId(order.getId())
+                .orderId(order.getOrderId())
                 .courierNumber(order.getCourierNumber())
                 .bounty(order.getBounty())
                 .payStatus(order.getPayStatus())
@@ -21,9 +21,10 @@ public class OrderVOFactory {
                 .createTime(order.getCreateTime())
                 .build();
     }
+
     public static OrderVO createSenderOrderVO(Order order) {
         return OrderVO.builder()
-                .orderId(order.getId())
+                .orderId(order.getOrderId())
                 .courierNumber(order.getCourierNumber())
                 .takeUserName(order.getTakeUserName())
                 .phone(order.getPhone())
@@ -33,9 +34,10 @@ public class OrderVOFactory {
                 .createTime(order.getCreateTime())
                 .build();
     }
+
     public static OrderVO createSenderOrderVO1(Order order) {
         return OrderVO.builder()
-                .orderId(order.getId())
+                .orderId(order.getOrderId())
                 .orderStatus(order.getOrderStatus())
                 .courierNumber(order.getCourierNumber())
                 .takeUserName(order.getTakeUserName())

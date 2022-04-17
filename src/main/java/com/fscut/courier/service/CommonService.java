@@ -18,4 +18,12 @@ public interface CommonService {
      * @param userId 用户id
      */
     void userExist(Integer userId);
+
+    /**
+     * 记录订单日志
+     *
+     * @param OrderId 订单id
+     * @param content 内容
+     */
+    void recordLog(String OrderId, String content);
 }

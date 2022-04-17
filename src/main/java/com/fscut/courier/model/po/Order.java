@@ -18,6 +18,10 @@ public class Order extends BaseEntity {
     @TableId(type = IdType.AUTO)
     private Integer id;
     /**
+     * 订单编号
+     */
+    private String orderId;
+    /**
      * 取件人
      */
     private String takeUserName;
@@ -49,10 +53,5 @@ public class Order extends BaseEntity {
      * 支付状态（未支付1，已支付2，已退款3）
      */
     private Integer payStatus;
-    /**
-     * 逻辑删除
-     */
-    @TableLogic
-    private Integer isDeleted;
 
 }
