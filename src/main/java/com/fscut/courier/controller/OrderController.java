@@ -1,5 +1,7 @@
 package com.fscut.courier.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fscut.courier.dao.UserInfoDao;
 import com.fscut.courier.model.dto.OrderDTO;
 import com.fscut.courier.model.dto.PageDTO;
 import com.fscut.courier.model.po.UserInfo;
@@ -30,6 +32,8 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private UserInfoDao userInfoDao;
 
     /**
      * 普通用户下单
@@ -120,11 +124,14 @@ public class OrderController {
     /**
      * 人脸识别比对登录
      *
-     * @param user
+     * @param
      * @return
      */
     @GetMapping("/faceMatch")
-    public MessUtil searchUser(UserInfo user) {
+    public MessUtil searchUser() {
+        QueryWrapper<UserInfo> userWrapper = new QueryWrapper<>();
+        userWrapper.eq("phone", "19951753185");
+        UserInfo user = userInfoDao.selectOne(userWrapper);
         MessUtil resBody = new MessUtil();
         resBody.setStatus(0);
         resBody.setMsg("系统不存在您的人脸或者您已被禁用-请注册登录并绑定人脸");
