@@ -76,7 +76,7 @@ public class OrderController {
     @GetMapping("cancel/{orderId}/{userId}")
     public ResultUtil.Result userCancelOrder(@PathVariable("orderId") String orderId,
                                              @PathVariable("userId") Integer userId) {
-        orderService.userCancelOrder(orderId,userId);
+        orderService.userCancelOrder(orderId, userId);
         return ok();
     }
 
@@ -87,7 +87,7 @@ public class OrderController {
      * @return
      */
     @PostMapping("orderHall")
-    public ResultUtil.Result orderHall(@RequestBody @Validated(PageDTO.User.class) PageDTO pageDTO) {
+    public ResultUtil.Result orderHall(@RequestBody @Validated(PageDTO.OrderHall.class) PageDTO pageDTO) {
         return ok(orderService.orderHall(pageDTO));
     }
 
