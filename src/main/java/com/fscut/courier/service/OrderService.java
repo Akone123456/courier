@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.fscut.courier.model.dto.OrderDTO;
 import com.fscut.courier.model.dto.PageDTO;
 import com.fscut.courier.model.po.Order;
+import com.fscut.courier.model.po.UserFace;
 import com.fscut.courier.model.vo.OrderVO;
+import com.fscut.courier.utils.MessUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -75,4 +77,11 @@ public interface OrderService extends IService<Order> {
     // * @return
     // */
     //void senderDeleteOrder(OrderDTO orderDTO);
+
+    /**
+     * 人脸比对完成订单
+     * @param userFace 人脸信息
+     * @return
+     */
+    MessUtil faceMatch(UserFace userFace);
 }
