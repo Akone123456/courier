@@ -283,6 +283,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
                 .eq("order_id", userFace.getOrderId());
         UserOrderSender userOrderSender = userOrderSenderDao.selectOne(userOrderSenderWrapper);
         UserInfo user = userInfoDao.selectById(userOrderSender.getUserId());
+        user.setImg(userFace.getImg());
         MessUtil resBody = new MessUtil();
         resBody.setStatus(0);
         resBody.setMsg("系统不存在您的人脸或者您已被禁用-请注册登录并绑定人脸");

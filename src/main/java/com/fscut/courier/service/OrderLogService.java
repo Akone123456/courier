@@ -10,5 +10,11 @@ import java.util.Map;
  * @author lxw
  */
 public interface OrderLogService extends IService<OrderLog> {
+    /**
+     * 订单日志
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
     Map<String, Object> orderLogDisplay(PageDTO pageDTO);
 }

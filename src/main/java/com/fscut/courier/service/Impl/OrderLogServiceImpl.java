@@ -31,6 +31,12 @@ public class OrderLogServiceImpl extends ServiceImpl<OrderLogDao, OrderLog> impl
     @Autowired
     private OrderLogDao orderLogDao;
 
+    /**
+     * 订单日志
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
     @Override
     public Map<String, Object> orderLogDisplay(PageDTO pageDTO) {
         LambdaQueryWrapper<OrderLog> orderLogWrapper = new LambdaQueryWrapper<>();

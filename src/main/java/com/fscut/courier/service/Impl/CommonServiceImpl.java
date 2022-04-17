@@ -2,9 +2,12 @@ package com.fscut.courier.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.fscut.courier.dao.AddressDao;
+import com.fscut.courier.dao.CommentDao;
 import com.fscut.courier.dao.OrderLogDao;
 import com.fscut.courier.dao.UserInfoDao;
+import com.fscut.courier.model.dto.CommentDTO;
 import com.fscut.courier.model.po.Address;
+import com.fscut.courier.model.po.Comment;
 import com.fscut.courier.model.po.OrderLog;
 import com.fscut.courier.model.po.UserInfo;
 import com.fscut.courier.service.CommonService;
@@ -25,6 +28,8 @@ public class CommonServiceImpl implements CommonService {
     private UserInfoDao userInfoDao;
     @Autowired
     private OrderLogDao orderLogDao;
+    @Autowired
+    private CommentDao commentDao;
 
     /**
      * 若为默认地址，修改其他默认地址
@@ -35,7 +40,7 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public void updateDefaultAddress(Integer isDefault, Integer userId) {
         if (DEFAULT.equals(isDefault)) {
-            addressDao.updateIsDefault(NOT_DEFAULT,userId);
+            addressDao.updateIsDefault(NOT_DEFAULT, userId);
         }
     }
 
@@ -52,10 +57,27 @@ public class CommonServiceImpl implements CommonService {
      * @param content 内容
      */
     @Override
-    public void recordLog(String orderId,String content) {
+    public void recordLog(String orderId, String content) {
         OrderLog orderLog = new OrderLog();
         orderLog.setOrderId(orderId);
         orderLog.setContent(content);
         orderLogDao.insert(orderLog);
+    }
+
+    /**
+     * 评价配送员
+     *
+     * @param commentDTO 评价信息
+     * @return
+     */
+    @Override
+    public void commentSender(CommentDTO commentDTO) {
+        // 添加评价信息
+        Comment comment = new Comment();
+        comment.setUserId(commentDTO.getUserId());
+        comment.setOrderId(commentDTO.getOrderId());
+        comment.setEvaluation(commentDTO.getEvaluation());
+        comment.setCommentNote(commentDTO.getCommentNote());
+        commentDao.insert(comment);
     }
 }

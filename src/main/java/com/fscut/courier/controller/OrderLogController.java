@@ -24,6 +24,12 @@ public class OrderLogController {
     @Autowired
     private OrderLogService orderLogService;
 
+    /**
+     * 订单日志
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
     @PostMapping("display")
     public ResultUtil.Result orderLogDisplay(@RequestBody @Validated({PageDTO.AdminOrder.class}) PageDTO pageDTO){
         return ok(orderLogService.orderLogDisplay(pageDTO));

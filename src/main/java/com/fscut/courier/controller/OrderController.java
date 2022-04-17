@@ -127,8 +127,8 @@ public class OrderController {
      * @param
      * @return
      */
-    @RequestMapping("/faceMatch")
-    public MessUtil searchUser(UserFace userFace) {
+    @PostMapping("faceMatch")
+    public MessUtil searchUser(@RequestBody UserFace userFace) {
         return orderService.faceMatch(userFace);
     }
 

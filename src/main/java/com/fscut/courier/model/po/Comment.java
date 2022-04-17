@@ -1,7 +1,10 @@
 package com.fscut.courier.model.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fscut.courier.model.po.base.BaseEntity;
 import lombok.Data;
 
 /**
@@ -9,10 +12,11 @@ import lombok.Data;
  */
 @Data
 @TableName("comments")
-public class Comment {
+public class Comment extends BaseEntity {
     /**
      * 主键id
      */
+    @TableId(type = IdType.AUTO)
     private Integer id;
     /**
      * 用户id

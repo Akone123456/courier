@@ -1,5 +1,6 @@
 package com.fscut.courier.controller;
 
+import com.fscut.courier.model.dto.CommentDTO;
 import com.fscut.courier.model.dto.PageDTO;
 import com.fscut.courier.service.CommonService;
 import com.fscut.courier.utils.ResultUtil;
@@ -27,4 +28,17 @@ public class CommentController {
     public ResultUtil.Result userCommetDisplay(@RequestBody @Validated(PageDTO.UserComment.class) PageDTO pageDTO) {
         return ok();
     }
+
+    /**
+     * 评价配送员
+     *
+     * @param commentDTO 评价信息
+     * @return
+     */
+    @PostMapping("sender")
+    public ResultUtil.Result commentSender(@RequestBody @Validated(CommentDTO.Save.class) CommentDTO commentDTO){
+        commonService.commentSender(commentDTO);
+        return ok();
+    }
+
 }

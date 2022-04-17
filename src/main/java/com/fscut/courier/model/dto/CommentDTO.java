@@ -31,7 +31,7 @@ public class CommentDTO {
     /**
      * 评语
      */
-    private String note;
+    private String commentNote;
 
     public interface Save {
 
