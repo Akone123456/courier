@@ -54,7 +54,7 @@ public class CommentController {
      * @param commentDTO 评价信息
      * @return
      */
-    @GetMapping("user/delete")
+    @PostMapping("user/delete")
     public ResultUtil.Result userDeleteComment(@RequestBody @Validated(CommentDTO.UserDelete.class) CommentDTO commentDTO) {
         commentService.userDeleteComment(commentDTO);
         return ok();
