@@ -1,6 +1,10 @@
 package com.fscut.courier.service;
 
 import com.fscut.courier.model.dto.CommentDTO;
+import com.fscut.courier.model.dto.PageDTO;
+
+import javax.jws.Oneway;
+import java.util.Map;
 
 /**
  * @author lxw
@@ -29,11 +33,5 @@ public interface CommonService {
      */
     void recordLog(String OrderId, String content);
 
-    /**
-     * 评价配送员
-     *
-     * @param commentDTO 评价信息
-     * @return
-     */
-    void commentSender(CommentDTO commentDTO);
+
 }

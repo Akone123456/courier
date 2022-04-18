@@ -54,6 +54,10 @@ public class OrderVO {
      * 备注
      */
     private String note;
+    /**
+     * 评价（1好评，2中评，3差评）
+     */
+    private Integer evaluation;
 
 
 }

@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fscut.courier.dao.OrderDao;
-import com.fscut.courier.dao.SenderDao;
-import com.fscut.courier.dao.UserInfoDao;
-import com.fscut.courier.dao.UserOrderSenderDao;
+import com.fscut.courier.dao.*;
 import com.fscut.courier.model.dto.OrderDTO;
 import com.fscut.courier.model.dto.PageDTO;
 import com.fscut.courier.model.po.*;
@@ -50,6 +47,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
     private SenderDao senderDao;
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private CommentDao commentDao;
 
 
     /**
@@ -114,7 +113,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
             Page<Order> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
             Page<Order> orderPage = orderDao.selectPage(page, querylambdaWrapper);
             orderPage.getRecords().forEach(order -> {
-                OrderVO orderVO = OrderVOFactory.createOrderVO(order);
+                // 获取评价状态
+                QueryWrapper<Comment> commentWrapper = new QueryWrapper<>();
+                commentWrapper.eq("order_id", order.getOrderId());
+                Comment comment = commentDao.selectOne(commentWrapper);
+                Integer evaluation = 0;
+                if (ObjectUtils.isNotNull(comment)) {
+                    evaluation = comment.getEvaluation();
+                }
+
+                OrderVO orderVO = OrderVOFactory.createOrderVO(order, evaluation);
                 orderVOList.add(orderVO);
             });
             return ImmutableMap.<String, Object>builder()
@@ -123,7 +131,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
                     .build();
         }
         return ImmutableMap.<String, Object>builder()
-                .put(PAGE_TOTAL, 0)
+                .put(PAGE_TOTAL, NO_ONE)
                 .put(ORDER_LIST, orderVOList)
                 .build();
     }
@@ -271,7 +279,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
                     .build();
         }
         return ImmutableMap.<String, Object>builder()
-                .put(PAGE_TOTAL, 0)
+                .put(PAGE_TOTAL, NO_ONE)
                 .put(ORDER_LIST, orderVOList)
                 .build();
     }

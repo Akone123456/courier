@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import static com.fscut.courier.utils.ConstValue.PAGE_TOTAL;
  * @author lxw
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class OrderLogServiceImpl extends ServiceImpl<OrderLogDao, OrderLog> implements OrderLogService {
     @Autowired
     private OrderLogDao orderLogDao;

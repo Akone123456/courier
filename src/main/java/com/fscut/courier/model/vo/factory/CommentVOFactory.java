@@ -11,10 +11,20 @@ public class CommentVOFactory {
 
     }
 
-    public static CommentVO createUserCommentVO(Comment comment, String senderRealName) {
+    public static CommentVO createUserCommentVO(Comment comment, String senderUserName) {
         return CommentVO.builder()
                 .commentId(comment.getId())
-                .senderRealName(senderRealName)
+                .orderId(comment.getOrderId())
+                .senderUserName(senderUserName)
+                .evaluation(comment.getEvaluation())
+                .commentNote(comment.getCommentNote())
+                .build();
+    }
+
+    public static CommentVO createSenderCommentVO(Comment comment) {
+        return CommentVO.builder()
+                .commentId(comment.getId())
+                .orderId(comment.getOrderId())
                 .evaluation(comment.getEvaluation())
                 .commentNote(comment.getCommentNote())
                 .build();

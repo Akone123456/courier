@@ -16,9 +16,13 @@ public class CommentVO {
      */
     private Integer commentId;
     /**
+     * 订单编号id
+     */
+    private String orderId;
+    /**
      * 配送员真实姓名
      */
-    private String senderRealName;
+    private String senderUserName;
     /**
      * 评价（好评1，中评2，差评3）
      */

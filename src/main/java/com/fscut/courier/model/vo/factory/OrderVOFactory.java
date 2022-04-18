@@ -11,13 +11,14 @@ public class OrderVOFactory {
 
     }
 
-    public static OrderVO createOrderVO(Order order) {
+    public static OrderVO createOrderVO(Order order, Integer evaluation) {
         return OrderVO.builder()
                 .orderId(order.getOrderId())
                 .courierNumber(order.getCourierNumber())
                 .bounty(order.getBounty())
                 .payStatus(order.getPayStatus())
                 .orderStatus(order.getOrderStatus())
+                .evaluation(evaluation)
                 .createTime(order.getCreateTime())
                 .build();
     }

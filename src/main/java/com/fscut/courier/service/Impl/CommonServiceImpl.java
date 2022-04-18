@@ -1,26 +1,31 @@
 package com.fscut.courier.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.fscut.courier.dao.AddressDao;
-import com.fscut.courier.dao.CommentDao;
-import com.fscut.courier.dao.OrderLogDao;
-import com.fscut.courier.dao.UserInfoDao;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.fscut.courier.dao.*;
 import com.fscut.courier.model.dto.CommentDTO;
-import com.fscut.courier.model.po.Address;
-import com.fscut.courier.model.po.Comment;
-import com.fscut.courier.model.po.OrderLog;
-import com.fscut.courier.model.po.UserInfo;
+import com.fscut.courier.model.dto.PageDTO;
+import com.fscut.courier.model.po.*;
 import com.fscut.courier.service.CommonService;
 import com.fscut.courier.utils.ValidateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.fscut.courier.utils.ConstValue.*;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author lxw
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class CommonServiceImpl implements CommonService {
     @Autowired
     private AddressDao addressDao;
@@ -28,8 +33,7 @@ public class CommonServiceImpl implements CommonService {
     private UserInfoDao userInfoDao;
     @Autowired
     private OrderLogDao orderLogDao;
-    @Autowired
-    private CommentDao commentDao;
+
 
     /**
      * 若为默认地址，修改其他默认地址
@@ -64,20 +68,4 @@ public class CommonServiceImpl implements CommonService {
         orderLogDao.insert(orderLog);
     }
 
-    /**
-     * 评价配送员
-     *
-     * @param commentDTO 评价信息
-     * @return
-     */
-    @Override
-    public void commentSender(CommentDTO commentDTO) {
-        // 添加评价信息
-        Comment comment = new Comment();
-        comment.setUserId(commentDTO.getUserId());
-        comment.setOrderId(commentDTO.getOrderId());
-        comment.setEvaluation(commentDTO.getEvaluation());
-        comment.setCommentNote(commentDTO.getCommentNote());
-        commentDao.insert(comment);
-    }
 }

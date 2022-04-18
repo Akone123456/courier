@@ -19,14 +19,6 @@ public class Comment extends BaseEntity {
     @TableId(type = IdType.AUTO)
     private Integer id;
     /**
-     * 用户id
-     */
-    private Integer userId;
-    /**
-     * 配送员id
-     */
-    private Integer senderId;
-    /**
      * 订单编号
      */
     private String orderId;

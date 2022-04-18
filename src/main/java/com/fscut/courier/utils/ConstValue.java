@@ -26,5 +26,7 @@ public class ConstValue {
     public static final Integer DELETED = 1;
     public static final Integer NOT_DELETED = 0;
     public static final String ORDER_LOG_LIST = "orderLogList";
+    public static final String COMMENT_LIST = "commentList";
+    public static final Integer NO_ONE = 0;
 
 }
