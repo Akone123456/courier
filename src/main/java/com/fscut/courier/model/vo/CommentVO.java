@@ -22,6 +22,10 @@ public class CommentVO {
      */
     private String orderId;
     /**
+     * 普通用户账号
+     */
+    private String commonUserName;
+    /**
      * 配送员真实姓名
      */
     private String senderUserName;

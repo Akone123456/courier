@@ -6,6 +6,7 @@ import com.fscut.courier.model.dto.PageDTO;
 import com.fscut.courier.model.po.Comment;
 import com.google.j2objc.annotations.ObjectiveCName;
 
+import javax.jws.Oneway;
 import java.util.Map;
 
 /**
@@ -37,5 +38,27 @@ public interface CommentService extends IService<Comment> {
      */
     void userDeleteComment(CommentDTO commentDTO);
 
+    /**
+     * 配送员-查看评价
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
     Map<String, Object> senderCommentDisplay(PageDTO pageDTO);
+
+    /**
+     * 管理员-查看评价
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
+    Map<String, Object> adminCommentDisplay(PageDTO pageDTO);
+
+    /**
+     * 管理员-删除评价
+     *
+     * @param commentDTO 评价信息
+     * @return
+     */
+    void adminDeleteComment(CommentDTO commentDTO);
 }

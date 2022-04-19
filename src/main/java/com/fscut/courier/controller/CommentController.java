@@ -60,9 +60,37 @@ public class CommentController {
         return ok();
     }
 
+    /**
+     * 配送员-查看评价
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
     @PostMapping("sender/display")
     public ResultUtil.Result senderCommentDisplay(@RequestBody @Validated(PageDTO.UserComment.class) PageDTO pageDTO) {
         return ok(commentService.senderCommentDisplay(pageDTO));
     }
 
+    /**
+     * 管理员-查看评价
+     *
+     * @param pageDTO 分页信息
+     * @return
+     */
+    @PostMapping("admin/display")
+    public ResultUtil.Result adminCommentDisplay(@RequestBody @Validated(PageDTO.AdminComment.class) PageDTO pageDTO) {
+        return ok(commentService.adminCommentDisplay(pageDTO));
+    }
+
+    /**
+     * 管理员-删除评价
+     *
+     * @param commentDTO 评价信息
+     * @return
+     */
+    @PostMapping("admin/delete")
+    public ResultUtil.Result adminDeleteComment(@RequestBody @Validated(CommentDTO.AdminDelete.class) CommentDTO commentDTO) {
+        commentService.adminDeleteComment(commentDTO);
+        return ok();
+    }
 }

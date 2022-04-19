@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fscut.courier.dao.OrderLogDao;
 import com.fscut.courier.model.dto.PageDTO;
+import com.fscut.courier.model.po.Comment;
 import com.fscut.courier.model.po.OrderLog;
 import com.fscut.courier.model.vo.OrderLogVO;
 import com.fscut.courier.model.vo.factory.OrderLogVOFactory;
@@ -43,7 +44,9 @@ public class OrderLogServiceImpl extends ServiceImpl<OrderLogDao, OrderLog> impl
     public Map<String, Object> orderLogDisplay(PageDTO pageDTO) {
         LambdaQueryWrapper<OrderLog> orderLogWrapper = new LambdaQueryWrapper<>();
         // 构造查询条件
-        orderLogWrapper.eq(ObjectUtils.isNotNull(pageDTO.getOrderId()), OrderLog::getOrderId, pageDTO.getOrderId());
+        orderLogWrapper.eq(ObjectUtils.isNotNull(pageDTO.getOrderId()), OrderLog::getOrderId, pageDTO.getOrderId())
+                .between(ObjectUtils.isNotNull(pageDTO.getStartTime()) && ObjectUtils.isNotNull(pageDTO.getEndTime())
+                        , OrderLog::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime());
         // 分页
         Page<OrderLog> page = new Page<>(pageDTO.getPageNum(), pageDTO.getPageSize());
         Page<OrderLog> orderLogPage = orderLogDao.selectPage(page, orderLogWrapper);
