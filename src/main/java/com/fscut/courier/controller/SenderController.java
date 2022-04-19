@@ -1,6 +1,7 @@
 package com.fscut.courier.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.fscut.courier.model.po.Sender;
 import com.fscut.courier.service.SenderService;
 import com.fscut.courier.utils.MessUtil;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+import static com.fscut.courier.utils.ConstValue.DELETED;
 import static com.fscut.courier.utils.ConstValue.USER_ID;
 
 /**
@@ -26,21 +28,22 @@ public class SenderController extends SendSmsController {
     SenderService senderService;
 
 
-
     /**
      * 分页查询配送员
+     *
      * @param pageIndex
      * @param pageSize
      * @param o
      * @return
      */
     @RequestMapping("/page")
-    public MessUtil page(@RequestParam(value = "pageIndex",defaultValue = "1") Integer pageIndex, @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize, Sender o){
-        return senderService.page(pageIndex, pageSize,o);
+    public MessUtil page(@RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex, @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, Sender o) {
+        return senderService.page(pageIndex, pageSize, o);
     }
 
     /**
      * 账号密码登录
+     *
      * @param o
      * @return
      */
@@ -50,10 +53,16 @@ public class SenderController extends SendSmsController {
         Sender employ = null;
         try {
             employ = senderService.getOne(new QueryWrapper<>(o));
-            if (employ == null){
+            if (ObjectUtils.isNull(employ)) {
+                messUtil.setStatus(0);
+                messUtil.setMsg("账号或密码错误");
+            } else if (employ.getStatus() == DELETED) {
+                messUtil.setStatus(0);
+                messUtil.setMsg("此账号已被禁用");
+            } else if (employ == null) {
                 messUtil.setStatus(0);
                 messUtil.setMsg("账号密码错误，请重新登录");
-            }else {
+            } else {
                 employ.setLoginType("sender");
                 SessionUtil.getSession().setAttribute(USER_ID, employ.getId());
                 messUtil.setStatus(1);
@@ -71,40 +80,41 @@ public class SenderController extends SendSmsController {
 
     /**
      * 短信验证码登录
+     *
      * @param phone
      * @param smscode
      * @return
      */
     @RequestMapping("/loginByCode")
-    public MessUtil loginByCode(String phone ,String smscode){
+    public MessUtil loginByCode(String phone, String smscode) {
         MessUtil messUtil = new MessUtil();
         //判断有没有这个用户
         try {
-            Sender s= new Sender() ;
+            Sender s = new Sender();
             s.setPhone(phone);
             Sender one = senderService.getOne(new QueryWrapper<>(s));
-            if(one == null){
+            if (one == null) {
                 messUtil.setStatus(0);
                 messUtil.setMsg("管理员没添加此手机号为配送员");
-            }else{
+            } else {
                 //判断验证码是否正确
-               if(map.get(phone)!=null &&map.get(phone).equals(smscode)) {
-                   one.setLoginType("sender");
-                   SessionUtil.getSession().setAttribute(USER_ID, one.getId());
-                   messUtil.setStatus(1);
-                   messUtil.setObj(one);
-                   messUtil.setMsg("登录成功");
-               }else{
-                   messUtil.setStatus(0);
-                   messUtil.setMsg("验证码输入错误");
-               }
+                if (map.get(phone) != null && map.get(phone).equals(smscode)) {
+                    one.setLoginType("sender");
+                    SessionUtil.getSession().setAttribute(USER_ID, one.getId());
+                    messUtil.setStatus(1);
+                    messUtil.setObj(one);
+                    messUtil.setMsg("登录成功");
+                } else {
+                    messUtil.setStatus(0);
+                    messUtil.setMsg("验证码输入错误");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
             messUtil.setStatus(0);
             messUtil.setMsg("系统错误");
         }
-        return  messUtil;
+        return messUtil;
     }
 
 
@@ -118,24 +128,24 @@ public class SenderController extends SendSmsController {
      * */
 
     @RequestMapping("/existesUno")
-    public MessUtil existesUno(Sender o){
-        MessUtil m=new MessUtil();
-        if(o.getUsername()==null||o.getUsername().trim().length()==0){
+    public MessUtil existesUno(Sender o) {
+        MessUtil m = new MessUtil();
+        if (o.getUsername() == null || o.getUsername().trim().length() == 0) {
             m.setStatus(0);
             m.setMsg("请输入编号");
             return m;
         }
-        Sender cc= new Sender();
+        Sender cc = new Sender();
         cc.setUsername(o.getUsername());
-        Sender lu=senderService.getOne(new QueryWrapper<>(cc));
-        if(o.getId()!=null){
-            if(lu!=null&&!lu.getId().equals(o.getId())){
+        Sender lu = senderService.getOne(new QueryWrapper<>(cc));
+        if (o.getId() != null) {
+            if (lu != null && !lu.getId().equals(o.getId())) {
                 m.setStatus(0);
                 m.setMsg("编号已存在");
                 return m;
             }
-        }else{
-            if(lu!=null){
+        } else {
+            if (lu != null) {
                 m.setStatus(0);
                 m.setMsg("编号已存在");
                 return m;
@@ -149,6 +159,7 @@ public class SenderController extends SendSmsController {
 
     /**
      * 管理员端-添加配送员信息
+     *
      * @param o
      * @return
      */
@@ -157,7 +168,7 @@ public class SenderController extends SendSmsController {
         MessUtil MessUtil = new MessUtil();
 
         try {
-            if(o.getId() == null){
+            if (o.getId() == null) {
                 o.setCreateTime(DateUtils.DateTimeToString(new Date()));
                 o.setPassword("123456");//默认密码
                 o.setStatus(1);//启用状态
@@ -174,8 +185,8 @@ public class SenderController extends SendSmsController {
     }
 
     @RequestMapping("/delete")
-    public MessUtil deleteEmploy (Sender o){
-        MessUtil MessUtil =  new MessUtil();
+    public MessUtil deleteEmploy(Sender o) {
+        MessUtil MessUtil = new MessUtil();
         try {
             senderService.removeById(o.getId());
             MessUtil.setStatus(1);
@@ -187,27 +198,29 @@ public class SenderController extends SendSmsController {
         }
         return MessUtil;
     }
-  
+
 
     //修改配送员信息-主要是禁用启用
     @RequestMapping("/update")
-    public MessUtil update(Sender o){
+    public MessUtil update(Sender o) {
 
-        MessUtil messUtil =new MessUtil();
-        if(o.getId() != null){
+        MessUtil messUtil = new MessUtil();
+        if (o.getId() != null) {
+           // o.setStatus(o.getStatus() == 1 ? 0 : 1);
             boolean b = senderService.saveOrUpdate(o);
-            if (b == true){
+            if (b == true) {
                 messUtil.setStatus(1);
                 messUtil.setMsg("修改成功");
             }
         }
-        return  messUtil;
+        return messUtil;
     }
+
     @RequestMapping("/initUpass")
-    public MessUtil initUpass(Integer id){
-        MessUtil messUtil =new MessUtil();
+    public MessUtil initUpass(Integer id) {
+        MessUtil messUtil = new MessUtil();
         try {
-            if(id != null){
+            if (id != null) {
                 Sender byId = senderService.getById(id);
                 byId.setPassword("123456");
                 senderService.saveOrUpdate(byId);
@@ -221,7 +234,7 @@ public class SenderController extends SendSmsController {
             messUtil.setMsg("操作失败");
 
         }
-        return  messUtil;
+        return messUtil;
     }
 
     /**
@@ -229,15 +242,15 @@ public class SenderController extends SendSmsController {
      */
 
     @RequestMapping("/updateUpass")
-    public MessUtil updateUpass(String oldp, String newp, String newp2, Sender o){
-        MessUtil resBody=new MessUtil();
-        Sender oo=senderService.getById(o.getId());
-        if(!oo.getPassword().equals(oldp)){
+    public MessUtil updateUpass(String oldp, String newp, String newp2, Sender o) {
+        MessUtil resBody = new MessUtil();
+        Sender oo = senderService.getById(o.getId());
+        if (!oo.getPassword().equals(oldp)) {
             resBody.setStatus(0);
             resBody.setMsg("原密码错误");
             return resBody;
         }
-        if(!newp.equals(newp2)){
+        if (!newp.equals(newp2)) {
             resBody.setStatus(0);
             resBody.setMsg("密码不一致");
             return resBody;

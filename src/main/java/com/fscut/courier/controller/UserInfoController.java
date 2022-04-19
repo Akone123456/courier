@@ -1,6 +1,7 @@
 package com.fscut.courier.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.fscut.courier.model.po.Role;
 import com.fscut.courier.model.po.UserInfo;
 import com.fscut.courier.service.UserInfoService;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+import static com.fscut.courier.utils.ConstValue.DELETED;
 import static com.fscut.courier.utils.ConstValue.USER_ID;
 
 /**
@@ -129,7 +131,13 @@ public class UserInfoController extends SendSmsController {
         UserInfo employ = null;
         try {
             employ = userInfoService.getOne(new QueryWrapper<>(o));
-            if (employ == null) {
+            if (ObjectUtils.isNull(employ)) {
+                messUtil.setStatus(0);
+                messUtil.setMsg("账号或密码错误");
+            } else if (employ.getStatus() == DELETED) {
+                messUtil.setStatus(0);
+                messUtil.setMsg("此账号已被禁用");
+            } else if (employ == null) {
                 messUtil.setStatus(0);
                 messUtil.setMsg("账号密码错误，请重新登录");
             } else {
@@ -163,7 +171,10 @@ public class UserInfoController extends SendSmsController {
             UserInfo s = new UserInfo();
             s.setPhone(phone);
             UserInfo one = userInfoService.getOne(new QueryWrapper<>(s));
-            if (one == null) {
+            if (one.getStatus() == DELETED) {
+                messUtil.setStatus(0);
+                messUtil.setMsg("此账号已被禁用");
+            } else if (one == null) {
                 messUtil.setStatus(0);
                 messUtil.setMsg("此手机号还没注册");
             } else {
@@ -248,6 +259,7 @@ public class UserInfoController extends SendSmsController {
         MessUtil resBody = new MessUtil();
         resBody.setStatus(0);
         resBody.setMsg("系统不存在您的人脸或者您已被禁用-请注册登录并绑定人脸");
+        // UserInfo one = userInfoService.getOne(new QueryWrapper<>(user));
         if (user.getImg() != null) {
             byte[] bytes = ImageUtils.base64ToByte(user.getImg());
             FaceData faceData = null;
@@ -274,7 +286,7 @@ public class UserInfoController extends SendSmsController {
                 //先查出所有的启用的用户
 
                 UserInfo o = new UserInfo();
-                o.setStatus(1);
+                o.setStatus(0);
                 List<UserInfo> list = userInfoService.getList(o);
                 for (UserInfo uu : list) {
                     if (uu.getFaceData() != null) {
