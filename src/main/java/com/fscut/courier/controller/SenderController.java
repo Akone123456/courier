@@ -93,7 +93,10 @@ public class SenderController extends SendSmsController {
             Sender s = new Sender();
             s.setPhone(phone);
             Sender one = senderService.getOne(new QueryWrapper<>(s));
-            if (one == null) {
+            if (one.getStatus() == DELETED) {
+                messUtil.setStatus(0);
+                messUtil.setMsg("此账号已被禁用");
+            } else if (one == null) {
                 messUtil.setStatus(0);
                 messUtil.setMsg("管理员没添加此手机号为配送员");
             } else {
@@ -206,7 +209,7 @@ public class SenderController extends SendSmsController {
 
         MessUtil messUtil = new MessUtil();
         if (o.getId() != null) {
-           // o.setStatus(o.getStatus() == 1 ? 0 : 1);
+            // o.setStatus(o.getStatus() == 1 ? 0 : 1);
             boolean b = senderService.saveOrUpdate(o);
             if (b == true) {
                 messUtil.setStatus(1);
