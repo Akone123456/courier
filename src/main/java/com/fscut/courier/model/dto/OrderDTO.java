@@ -54,7 +54,7 @@ public class OrderDTO {
     /**
      * 备注
      */
-    @NotNull(message = "备注信息不能为null", groups = {Save.class})
+    //@NotNull(message = "备注信息不能为null", groups = {Save.class})
     private String note;
     /**
      * 赏金

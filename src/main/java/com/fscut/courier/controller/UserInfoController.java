@@ -18,8 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
-import static com.fscut.courier.utils.ConstValue.DELETED;
-import static com.fscut.courier.utils.ConstValue.USER_ID;
+import static com.fscut.courier.utils.ConstValue.*;
 
 /**
  * 管理端-普通用户control控制层
@@ -31,6 +30,8 @@ public class UserInfoController extends SendSmsController {
 
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private RedisUtils redisUtils;
 
     //验证账号唯一性
     @RequestMapping("valiUserName")
@@ -179,7 +180,8 @@ public class UserInfoController extends SendSmsController {
                 messUtil.setMsg("此手机号还没注册");
             } else {
                 //判断验证码是否正确
-                if (map.get(phone).equals(smscode)) {
+                String smscode_redis = redisUtils.get(SMS_CODE_ + phone);
+                if (smscode_redis.equals(smscode)) {
                     one.setLoginType("userinfo");
                     SessionUtil.getSession().setAttribute(USER_ID, one.getId());
                     messUtil.setStatus(1);

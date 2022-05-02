@@ -321,7 +321,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
                 //先查出所有的启用的用户
 
                 UserInfo o = new UserInfo();
-                o.setStatus(1);
+                o.setStatus(0);
                 List<UserInfo> list = userInfoService.getList(o);
                 for (UserInfo uu : list) {
                     if (uu.getFaceData() != null) {

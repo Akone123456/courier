@@ -4,6 +4,17 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        max-active: 50
+        max-wait: 3000
+        max-idle: 20
+        min-idle: 2
+    timeout: 5000
+
 server:
   port: 8011
 logging:

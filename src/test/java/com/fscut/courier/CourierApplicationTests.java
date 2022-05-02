@@ -26,5 +26,18 @@ class CourierApplicationTests {
     @Test
     void contextLoads() {
     }
+    @Test
+    public void shiliuweiTest(){
+
+        for(int p = 0;p<10;p++){
+            String code = "";
+            for(int i = 0;i<12;i++){
+                int k =  (int) (Math.random()*9+1);
+                code += String.valueOf(k);
+            }
+            System.out.println(code);
+        }
+
+    }
 
 }
