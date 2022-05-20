@@ -71,7 +71,7 @@ public class UserInfoController extends SendSmsController {
             try {
                 //判断验证码输入是否正确
                 if (map.get(o.getPhone()) != null && map.get(o.getPhone()).equals(o.getSmscode())) {
-                    o.setStatus(1);
+                    o.setStatus(0);
                     o.setCreateTime(DateUtils.getNowDateString());
                     o.setPhoto(Sys.defaultFace);
                     //o.setRole(UserRoleEnum.USER.getRole());
@@ -326,7 +326,7 @@ public class UserInfoController extends SendSmsController {
      * @return
      */
     @RequestMapping("/page")
-    public MessUtil page(@RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex, @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, UserInfo o) {
+    public MessUtil page(@RequestParam(value = "pageNo", defaultValue = "1") Integer pageIndex, @RequestParam(value = "limit", defaultValue = "10") Integer pageSize, UserInfo o) {
         return userInfoService.page(pageIndex, pageSize, o);
     }
 

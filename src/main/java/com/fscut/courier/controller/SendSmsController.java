@@ -40,7 +40,7 @@ public class SendSmsController {
             //随机生成验证码并发送
             String code = (int) ((Math.random() * 9 + 1) * 100000) + "";
             redisUtils.set(SMS_CODE_ + phone, code, 5L);
-            //txSmsTemplate.sendMesModel(phone, code);
+            txSmsTemplate.sendMesModel(phone, code);
             System.out.println("发送的验证码：" + code);
             map.put(phone, code);
             messUtil.setStatus(1);

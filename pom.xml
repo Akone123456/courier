@@ -111,6 +111,33 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>op</groupId>
+            <artifactId>opencv</artifactId>
+            <version>455</version>
+            <scope>system</scope>
+            <systemPath>
+                ${project.basedir}/src/main/webapp/WEB-INF/lib/arcsoft-sdk-face-3.0.0.0.jar
+            </systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>4.1-1.4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>1.4.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/ffmpeg-platform -->
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>ffmpeg-platform</artifactId>
+            <version>4.1-1.4.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>

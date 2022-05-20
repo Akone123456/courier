@@ -34,14 +34,14 @@ public class PageDTO {
      */
     @NotNull(message = "页面大小不能为空", groups = {Show.class, User.class, Sender.class, AdminOrder.class, OrderHall.class, UserComment.class,AdminComment.class})
     @Min(value = 1, message = "页面大小不能小于1", groups = {Show.class, User.class, Sender.class, AdminOrder.class, OrderHall.class, UserComment.class,AdminComment.class})
-    @Max(value = 10, message = "页面大小不能大于10", groups = {Show.class, User.class, Sender.class, AdminOrder.class, OrderHall.class, UserComment.class,AdminComment.class})
+    @Max(value = 100, message = "页面大小不能大于100", groups = {Show.class, User.class, Sender.class, AdminOrder.class, OrderHall.class, UserComment.class,AdminComment.class})
     private Integer pageSize;
     /**
      * 页码
      */
     @NotNull(message = "页码不能为空", groups = {Show.class, User.class, Sender.class, AdminOrder.class, OrderHall.class, UserComment.class,AdminComment.class})
     @Min(value = 1, message = "页码不能小于1", groups = {Show.class, User.class, Sender.class, AdminOrder.class, OrderHall.class, UserComment.class,AdminComment.class})
-    @Max(value = 10, message = "页码不能大于10", groups = {Show.class, User.class, Sender.class, AdminOrder.class, OrderHall.class, UserComment.class,AdminComment.class})
+    @Max(value = 100, message = "页码不能大于100", groups = {Show.class, User.class, Sender.class, AdminOrder.class, OrderHall.class, UserComment.class,AdminComment.class})
     private Integer pageNum;
 
     /**

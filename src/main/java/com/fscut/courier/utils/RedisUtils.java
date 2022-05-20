@@ -19,6 +19,12 @@ public class RedisUtils {
     private RedisTemplate<String, String> redisTemplate;
 
     /**
+     * setnx
+     */
+    public Boolean lock(){
+        return redisTemplate.opsForValue().setIfAbsent("lock","lock-order");
+    }
+    /**
      * 读取缓存
      *
      * @param key

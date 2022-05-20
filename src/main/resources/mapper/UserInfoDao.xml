@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fscut.courier.dao.UserInfoDao">
+    <select id="selectAll" resultType="com.fscut.courier.model.po.UserInfo">
+        select id,phone,username,password,photo,status,face_data,create_time,note
+        from userinfo
+    </select>
+
+
+</mapper>

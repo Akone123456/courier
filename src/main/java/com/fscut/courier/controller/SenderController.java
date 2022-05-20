@@ -37,7 +37,7 @@ public class SenderController extends SendSmsController {
      * @return
      */
     @RequestMapping("/page")
-    public MessUtil page(@RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex, @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, Sender o) {
+    public MessUtil page(@RequestParam(value = "pageNo", defaultValue = "1") Integer pageIndex, @RequestParam(value = "limit", defaultValue = "10") Integer pageSize, Sender o) {
         return senderService.page(pageIndex, pageSize, o);
     }
 
@@ -174,7 +174,7 @@ public class SenderController extends SendSmsController {
             if (o.getId() == null) {
                 o.setCreateTime(DateUtils.DateTimeToString(new Date()));
                 o.setPassword("123456");//默认密码
-                o.setStatus(1);//启用状态
+                o.setStatus(0);//启用状态
             }
             senderService.saveOrUpdate(o);
             MessUtil.setStatus(1);

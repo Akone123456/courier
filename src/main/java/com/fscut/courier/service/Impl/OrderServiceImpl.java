@@ -49,6 +49,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
     private UserInfoService userInfoService;
     @Autowired
     private CommentDao commentDao;
+    @Autowired
+    private RedisUtils redisUtils;
 
 
     /**
@@ -192,7 +194,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
                 .eq(Order::getPayStatus, PayStatusEnum.HAVE_PAY.getStatus())
                 .eq(Order::getOrderStatus, OrderStatusEnum.NOT_ORDER.getStatus())
                 .between(ObjectUtils.isNotNull(pageDTO.getStartTime())
-                        && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime());
+                        && ObjectUtils.isNotNull(pageDTO.getEndTime()), Order::getCreateTime, pageDTO.getStartTime(), pageDTO.getEndTime())
+                .orderByDesc(Order::getUpdateTime);
         // 构造返回数据
         List<OrderVO> orderVOList = new ArrayList<>();
         // 分页
@@ -216,27 +219,42 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
      */
     @Override
     public void receiveOrder(OrderDTO orderDTO) {
-        // 修改订单状态
-        UpdateWrapper<Order> orderWrapper = new UpdateWrapper<>();
-        orderWrapper.set("order_status", orderDTO.getOrderStatus())
-                .eq("order_id", orderDTO.getOrderId());
-        orderDao.update(null, orderWrapper);
-        // 修改用户-订单-配送员中间表
-        UpdateWrapper<UserOrderSender> userOrderSenderUpdateWrapper = new UpdateWrapper<>();
-        userOrderSenderUpdateWrapper.set("sender_id", orderDTO.getUserId())
-                .eq("order_id", orderDTO.getOrderId());
-        userOrderSenderDao.update(null, userOrderSenderUpdateWrapper);
-        // 记录日志
-        Sender sender = senderDao.selectById(orderDTO.getUserId());
-        String content = "";
-        if (orderDTO.getOrderStatus().equals(OrderStatusEnum.HAVE_ORDER.getStatus())) {
-            content = "配送员:" + sender.getUsername() + ",已经接单!!!";
-        } else if (orderDTO.getOrderStatus().equals(OrderStatusEnum.DISTRIBUTION.getStatus())) {
-            content = "配送员:" + sender.getUsername() + ",正在配送中!!!";
-        } else if (orderDTO.getOrderStatus().equals(OrderStatusEnum.FINISH_ORDER.getStatus())) {
-            content = "配送员:" + sender.getUsername() + ",完成订单!!!";
+        // 1. 从redis中获取锁，setnx
+        Boolean lock = redisUtils.lock();
+        if (lock) {
+            // 修改订单状态
+            UpdateWrapper<Order> orderWrapper = new UpdateWrapper<>();
+            orderWrapper.set("order_status", orderDTO.getOrderStatus())
+                    .eq("order_id", orderDTO.getOrderId());
+            orderDao.update(null, orderWrapper);
+            // 修改用户-订单-配送员中间表
+            UpdateWrapper<UserOrderSender> userOrderSenderUpdateWrapper = new UpdateWrapper<>();
+            userOrderSenderUpdateWrapper.set("sender_id", orderDTO.getUserId())
+                    .eq("order_id", orderDTO.getOrderId());
+            userOrderSenderDao.update(null, userOrderSenderUpdateWrapper);
+            // 记录日志
+            Sender sender = senderDao.selectById(orderDTO.getUserId());
+            String content = "";
+            if (orderDTO.getOrderStatus().equals(OrderStatusEnum.HAVE_ORDER.getStatus())) {
+                content = "配送员:" + sender.getUsername() + ",已经接单!!!";
+            } else if (orderDTO.getOrderStatus().equals(OrderStatusEnum.DISTRIBUTION.getStatus())) {
+                content = "配送员:" + sender.getUsername() + ",正在配送中!!!";
+            } else if (orderDTO.getOrderStatus().equals(OrderStatusEnum.FINISH_ORDER.getStatus())) {
+                content = "配送员:" + sender.getUsername() + ",完成订单!!!";
+            }
+            commonService.recordLog(orderDTO.getOrderId(), content);
+            // 释放锁
+            redisUtils.delete("lock");
+        }else {
+            // 如果没有获取到，就每隔一秒再次尝试获取锁
+            try {
+                Thread.sleep(1000);
+                receiveOrder(orderDTO);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        commonService.recordLog(orderDTO.getOrderId(), content);
+
     }
 
     /**

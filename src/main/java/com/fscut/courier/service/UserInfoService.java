@@ -14,6 +14,7 @@ import com.fscut.courier.model.vo.factory.SenderVOFactory;
 import com.fscut.courier.model.vo.factory.UserInfoVOFactory;
 import com.fscut.courier.utils.SessionUtil;
 import com.fscut.courier.utils.ValidateUtil;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.fscut.courier.model.po.UserInfo;
@@ -48,20 +49,22 @@ public class UserInfoService extends ServiceImpl<UserInfoDao, UserInfo> {
     public MessUtil page(Integer pageIndex, Integer pageSize, UserInfo o) {
 
         MessUtil messUtil = new MessUtil();
-        PageHelper.startPage(pageIndex, pageSize, "id desc");
+
         LambdaQueryWrapper<UserInfo> lambdaQueryWrapper = Wrappers.lambdaQuery();
         //条件查询
-        if (Objects.nonNull(o.getPhone()) && o.getPhone().trim().length() > 0) {
-            lambdaQueryWrapper.eq(UserInfo::getPhone, o.getPhone());
-        }
-        if (Objects.nonNull(o.getUsername()) && o.getUsername().trim().length() > 0) {
-            lambdaQueryWrapper.like(UserInfo::getUsername, o.getUsername());
-        }
-        if (Objects.nonNull(o.getStatus())) {
-            lambdaQueryWrapper.eq(UserInfo::getStatus, o.getStatus());
-        }
-        List<UserInfo> userInfoList = userInfoDao.selectList(lambdaQueryWrapper);
+        //if (Objects.nonNull(o.getPhone()) && o.getPhone().trim().length() > 0) {
+        //    lambdaQueryWrapper.eq(UserInfo::getPhone, o.getPhone());
+        //}
+        //if (Objects.nonNull(o.getUsername()) && o.getUsername().trim().length() > 0) {
+        //    lambdaQueryWrapper.like(UserInfo::getUsername, o.getUsername());
+        //}
+        //if (Objects.nonNull(o.getStatus())) {
+        //    lambdaQueryWrapper.eq(UserInfo::getStatus, o.getStatus());
+        //}
+        PageHelper.startPage(pageIndex, pageSize);
+        List<UserInfo> userInfoList = userInfoDao.selectAll();
         PageInfo<UserInfo> pageInfo = new PageInfo(userInfoList, pageSize);
+        System.out.println(pageInfo.getTotal());
         messUtil.setObj(pageInfo);
         return messUtil;
     }
